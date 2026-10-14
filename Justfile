@@ -13,8 +13,16 @@ test:
 drift:
     fish scripts/drift-check.fish
 
-# Run all verification suites (test + drift)
-all: test drift
+# Check upstream GitHub releases for agy CLI updates
+release:
+    fish scripts/check-upstream-release.fish
+
+# Fetch and display latest upstream changelog
+changelog:
+    fish scripts/check-upstream-release.fish -c
+
+# Run all verification suites (test + drift + upstream release check)
+all: test drift release
 
 # Format completions and scripts using fish_indent
 fmt:
