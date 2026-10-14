@@ -9,7 +9,7 @@ Fish shell tab completions for the Google Antigravity CLI (`agy`).
 ## Key Files
 
 - **`completions/agy.fish`** — Main completion script. Contains helper functions, subcommand routing, flag definitions, and alias propagation (`antigravity` -> `agy`).
-- **`scripts/verify-completions.fish`** — Static verification (10 tests). Sources the completion file and checks registrations. No external CLI required.
+- **`scripts/verify-completions.fish`** — Static verification (11 tests). Sources the completion file and checks registrations. No external CLI required.
 - **`scripts/drift-check.fish`** — Dynamic drift detection. Compares completions against `agy --help` output. Requires `agy` in PATH. Run as subprocess (`fish scripts/drift-check.fish`).
 - **`agy-version`** — Tracks which `agy` CLI version the completions are based on.
 - **`.agents/skills/update-completions/SKILL.md`** — Antigravity skill for regenerating or updating completions.

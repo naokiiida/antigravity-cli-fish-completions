@@ -24,7 +24,7 @@ set -g fish_complete_path "$repo_root/completions"
 
 echo "Verifying completion script: $completion_file"
 
-set -l total_tests 10
+set -l total_tests 11
 
 # Test 1: Syntax check
 echo "  [1/$total_tests] Running syntax check..."
@@ -146,6 +146,16 @@ set -l src (cat "$completion_file")
 for legacy in "stat -f" "stat -c" "date +%s" "(basename "
     if string match -q "*$legacy*" -- $src
         echo "FAIL: Legacy external command found: $legacy"
+        exit 1
+    end
+end
+
+# Test 11: Top-level flags do not leak into subcommands (regression guard)
+echo "  [11/$total_tests] Checking subcommand flag isolation..."
+set -l rc_start_flags (complete -C "agy remote-control start --" 2>/dev/null)
+for leaked in continue conversation effort mode model print sandbox
+    if string match -q "*--$leaked*" -- $rc_start_flags
+        echo "FAIL: Leaked top-level flag into subcommand: --$leaked"
         exit 1
     end
 end

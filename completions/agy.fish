@@ -184,22 +184,22 @@ complete -c agy -n __fish_use_subcommand -xa update -d "Update CLI"
 # =============================================================================
 
 # Simple toggles & common flags
-complete -c agy -s c -l continue -d "Continue the most recent conversation"
-complete -c agy -l dangerously-skip-permissions -d "Auto-approve all tool permission requests without prompting"
-complete -c agy -l disable-slash-commands -d "Disable slash command and skill expansion in print mode"
-complete -c agy -l new-project -d "Create a new project for this session"
-complete -c agy -s p -l print -d "Run a single prompt non-interactively and print the response"
-complete -c agy -l prompt -d "Alias for --print"
-complete -c agy -l remote-control -d "Create a remote connection for the CLI session on start up"
-complete -c agy -l sandbox -d "Run in a sandbox with terminal restrictions enabled"
-complete -c agy -l version -d "Output the version number"
-complete -c agy -s h -l help -d "Show help"
+complete -c agy -n __fish_use_subcommand -s c -l continue -d "Continue the most recent conversation"
+complete -c agy -n __fish_use_subcommand -l dangerously-skip-permissions -d "Auto-approve all tool permission requests without prompting"
+complete -c agy -n __fish_use_subcommand -l disable-slash-commands -d "Disable slash command and skill expansion in print mode"
+complete -c agy -n __fish_use_subcommand -l new-project -d "Create a new project for this session"
+complete -c agy -n __fish_use_subcommand -s p -l print -d "Run a single prompt non-interactively and print the response"
+complete -c agy -n __fish_use_subcommand -l prompt -d "Alias for --print"
+complete -c agy -n __fish_use_subcommand -l remote-control -d "Create a remote connection for the CLI session on start up"
+complete -c agy -n __fish_use_subcommand -l sandbox -d "Run in a sandbox with terminal restrictions enabled"
+complete -c agy -n __fish_use_subcommand -l version -d "Output the version number"
+complete -c agy -n __fish_use_subcommand -s h -l help -d "Show help"
 
 # Enumerated value flags
-complete -c agy -l effort -d "Reasoning effort for the current CLI session" -rxa "low medium high xhigh max"
-complete -c agy -l mode -d "Set the agent execution mode for this session" -rxa "accept-edits auto plan"
-complete -c agy -l input-format -d "Input format for print mode" -rxa "text stream-json"
-complete -c agy -l output-format -d "Output format for print mode" -rxa "text json stream-json"
+complete -c agy -n __fish_use_subcommand -l effort -d "Reasoning effort for the current CLI session" -rxa "low medium high xhigh max"
+complete -c agy -n __fish_use_subcommand -l mode -d "Set the agent execution mode for this session" -rxa "accept-edits auto plan"
+complete -c agy -n __fish_use_subcommand -l input-format -d "Input format for print mode" -rxa "text stream-json"
+complete -c agy -n __fish_use_subcommand -l output-format -d "Output format for print mode" -rxa "text json stream-json"
 
 # Model completion (known available models + descriptions)
 function __fish_agy_known_models
@@ -215,19 +215,19 @@ function __fish_agy_known_models
         "claude-sonnet-5-5-low" "Claude Sonnet 5.5 (Low)" \
         "gpt-oss-120b-medium" "GPT-OSS 120B (Medium)"
 end
-complete -c agy -l model -d "Model for the current CLI session" -rxa "(__fish_agy_known_models)"
+complete -c agy -n __fish_use_subcommand -l model -d "Model for the current CLI session" -rxa "(__fish_agy_known_models)"
 
 # Dynamic value flags
-complete -c agy -l conversation -d "Resume a previous conversation by ID" -rxa "(__fish_agy_conversations)"
-complete -c agy -l agent -d "Agent for the current CLI session" -rxa "(__fish_agy_agents)"
-complete -c agy -l add-dir -d "Add a directory to the workspace (repeatable)" -rxa "(__fish_complete_directories)"
+complete -c agy -n __fish_use_subcommand -l conversation -d "Resume a previous conversation by ID" -rxa "(__fish_agy_conversations)"
+complete -c agy -n __fish_use_subcommand -l agent -d "Agent for the current CLI session" -rxa "(__fish_agy_agents)"
+complete -c agy -n __fish_use_subcommand -l add-dir -d "Add a directory to the workspace (repeatable)" -rxa "(__fish_complete_directories)"
 
 # File and string value flags
-complete -c agy -s i -l prompt-interactive -d "Run an initial prompt interactively and continue the session" -rx
-complete -c agy -l print-timeout -d "Optional time limit for print mode (e.g. 30s, 5m)" -rx
-complete -c agy -l project -d "Project ID or project name for the current CLI session" -rx
-complete -c agy -l json-schema -d "Optional JSON schema string or path to schema file" -rF
-complete -c agy -l log-file -d "Override CLI log file path" -rF
+complete -c agy -n __fish_use_subcommand -s i -l prompt-interactive -d "Run an initial prompt interactively and continue the session" -rx
+complete -c agy -n __fish_use_subcommand -l print-timeout -d "Optional time limit for print mode (e.g. 30s, 5m)" -rx
+complete -c agy -n __fish_use_subcommand -l project -d "Project ID or project name for the current CLI session" -rx
+complete -c agy -n __fish_use_subcommand -l json-schema -d "Optional JSON schema string or path to schema file" -rF
+complete -c agy -n __fish_use_subcommand -l log-file -d "Override CLI log file path" -rF
 
 # =============================================================================
 # install subcommand
