@@ -1,0 +1,27 @@
+name: Daily Upstream Release & Drift Check
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC (09:00 JST)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install fish shell 4.x
+        run: |
+          sudo apt-add-repository -y ppa:fish-shell/release-4
+          sudo apt-get update
+          sudo apt-get install -y fish
+
+      - name: Verify static completions
+        run: fish scripts/verify-completions.fish
+
+      - name: Check upstream GitHub releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: fish scripts/check-upstream-release.fish -c
