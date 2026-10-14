@@ -40,23 +40,23 @@ For each `MISSING` line in the drift report, run `agy <subcommand> --help` to in
 ### Fish Completion Patterns
 
 ```fish
-# Simple toggle flag
-complete -c agy -l flag-name -d "Description"
+# Root-level flag (REQUIRED: must use -n __fish_use_subcommand to prevent leaking into subcommands)
+complete -c agy -n __fish_use_subcommand -l flag-name -d "Description"
 
-# Flag with short form
-complete -c agy -s f -l flag-name -d "Description"
+# Root-level flag with short form
+complete -c agy -n __fish_use_subcommand -s f -l flag-name -d "Description"
 
-# Flag with enumerated values
-complete -c agy -l flag-name -d "Description" -rxa "val1 val2 val3"
+# Root-level flag with enumerated values
+complete -c agy -n __fish_use_subcommand -l flag-name -d "Description" -rxa "val1 val2 val3"
 
-# Flag requiring a value (freeform)
-complete -c agy -l flag-name -d "Description" -rx
+# Root-level flag requiring a value (freeform)
+complete -c agy -n __fish_use_subcommand -l flag-name -d "Description" -rx
 
-# Flag with file completion
-complete -c agy -l flag-name -d "Description" -rF
+# Root-level flag with file completion
+complete -c agy -n __fish_use_subcommand -l flag-name -d "Description" -rF
 
-# Flag with directory completion
-complete -c agy -l flag-name -d "Description" -rxa "(__fish_complete_directories)"
+# Root-level flag with directory completion
+complete -c agy -n __fish_use_subcommand -l flag-name -d "Description" -rxa "(__fish_complete_directories)"
 
 # Subcommand (top level)
 complete -c agy -n __fish_use_subcommand -xa "subcmd" -d "Description"
@@ -79,6 +79,7 @@ complete -c agy -n "CONDITION" -a "(__fish_complete_command)" -d "Command"
 ```
 
 ### Rules
+- **CRITICAL: Flag Scoping & Isolation**: Root-level flags MUST be scoped with `-n __fish_use_subcommand`. In Fish shell, flags registered without a condition match in *all* commandline contexts, which leaks root flags into subcommands where they are invalid. Only register unbounded flags if the CLI explicitly supports those flags across every subcommand.
 - Top-level subcommands use `__fish_use_subcommand` (fish built-in).
 - Helper functions parse output using fish `string` builtins — no jq/python3.
 - **REQUIRED (Fish 4.0+)**: Use `path basename -E` instead of `basename`, `path mtime -R` instead of `stat`/`date`. Never use the external `basename`/`stat`/`date` commands.

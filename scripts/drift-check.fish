@@ -211,6 +211,15 @@ for subcmd in $flag_checks
         end
     end
 
+    # Isolation check: completions should not contain extra flags not present in help (e.g. root flag leakage)
+    for flag in $sub_comp_flags
+        if not contains -- $flag $sub_help_flags
+            test "$flag" = "help"; and continue
+            echo "  EXTRA/LEAKED in completions: agy $subcmd --$flag"
+            set test_drift 1
+        end
+    end
+
     if test $test_drift -eq 0
         echo "  OK"
     end
