@@ -94,12 +94,12 @@ end
 # Test 6: Helper function existence
 echo "  [6/$total_tests] Checking helper functions..."
 for fn in __fish_agy_conversations __fish_agy_agents __fish_agy_mcp_servers \
-          __fish_agy_mcp_enabled_servers __fish_agy_mcp_disabled_servers \
-          __fish_agy_installed_plugins __fish_agy_enabled_plugins __fish_agy_disabled_plugins \
-          __fish_agy_cache_dir __fish_agy_marketplace_dirs __fish_agy_marketplaces \
-          __fish_agy_marketplace_plugins __fish_agy_mcp_add_command \
-          __fish_agy_plugin_install_target __fish_agy_plugin_link_token_count \
-          __fish_agy_plugin_link_arg1 __fish_agy_plugin_link_arg2
+    __fish_agy_mcp_enabled_servers __fish_agy_mcp_disabled_servers \
+    __fish_agy_installed_plugins __fish_agy_enabled_plugins __fish_agy_disabled_plugins \
+    __fish_agy_cache_dir __fish_agy_marketplace_dirs __fish_agy_marketplaces \
+    __fish_agy_marketplace_plugins __fish_agy_mcp_add_command \
+    __fish_agy_plugin_install_target __fish_agy_plugin_link_token_count \
+    __fish_agy_plugin_link_arg1 __fish_agy_plugin_link_arg2
     if not functions -q $fn
         echo "FAIL: Missing helper function: $fn"
         exit 1

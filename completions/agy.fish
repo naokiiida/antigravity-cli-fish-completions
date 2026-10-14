@@ -61,12 +61,12 @@ function __fish_agy_agents
                 set -l line_num 0
                 while read -l line
                     set line_num (math $line_num + 1)
-                    if test $line_num -eq 1 -a "$line" = "---"
+                    if test $line_num -eq 1 -a "$line" = ---
                         set in_frontmatter 1
                         continue
                     end
                     if test $in_frontmatter -eq 1
-                        if test "$line" = "---"
+                        if test "$line" = ---
                             break
                         end
                         set -l match (string match -rg '^description:\s*(.+)' -- "$line")
@@ -74,7 +74,7 @@ function __fish_agy_agents
                             set desc $match
                         end
                     end
-                end < "$f"
+                end <"$f"
 
                 if test -n "$desc"
                     printf '%s\t%s\n' "$name" "$desc"
@@ -240,7 +240,7 @@ function __fish_agy_marketplace_plugins
                     set name ""
                     set desc ""
                 end
-            end < "$f"
+            end <"$f"
         end
     end
 end
@@ -249,7 +249,7 @@ function __fish_agy_mcp_add_command
     set -l tokens (commandline -cop)
     set -l add_idx 0
     for i in (seq (count $tokens))
-        if test "$tokens[$i]" = "add"
+        if test "$tokens[$i]" = add
             set add_idx $i
             break
         end
@@ -281,7 +281,7 @@ function __fish_agy_plugin_install_target
     set -l tokens (commandline -cop)
     set -l idx 0
     for i in (seq (count $tokens))
-        if test "$tokens[$i]" = "install"
+        if test "$tokens[$i]" = install
             set idx $i
             break
         end
@@ -302,7 +302,7 @@ function __fish_agy_plugin_link_token_count
     set -l tokens (commandline -cop)
     set -l link_idx 0
     for i in (seq (count $tokens))
-        if test "$tokens[$i]" = "link"
+        if test "$tokens[$i]" = link
             set link_idx $i
             break
         end
@@ -371,13 +371,13 @@ function __fish_agy_known_models
         "gemini-3.8-flash-high" "Gemini 3.8 Flash (High)" \
         "gemini-3.8-flash-medium" "Gemini 3.8 Flash (Medium)" \
         "gemini-3.8-flash-low" "Gemini 3.8 Flash (Low)" \
-        "claude-opus-5-5-high" "Claude Opus 5.5 (High)" \
-        "claude-opus-5-5-medium" "Claude Opus 5.5 (Medium)" \
-        "claude-opus-5-5-low" "Claude Opus 5.5 (Low)" \
-        "claude-sonnet-5-5-high" "Claude Sonnet 5.5 (High)" \
-        "claude-sonnet-5-5-medium" "Claude Sonnet 5.5 (Medium)" \
-        "claude-sonnet-5-5-low" "Claude Sonnet 5.5 (Low)" \
-        "gpt-oss-120b-medium" "GPT-OSS 120B (Medium)"
+        claude-opus-5-5-high "Claude Opus 5.5 (High)" \
+        claude-opus-5-5-medium "Claude Opus 5.5 (Medium)" \
+        claude-opus-5-5-low "Claude Opus 5.5 (Low)" \
+        claude-sonnet-5-5-high "Claude Sonnet 5.5 (High)" \
+        claude-sonnet-5-5-medium "Claude Sonnet 5.5 (Medium)" \
+        claude-sonnet-5-5-low "Claude Sonnet 5.5 (Low)" \
+        gpt-oss-120b-medium "GPT-OSS 120B (Medium)"
 end
 complete -c agy -n __fish_use_subcommand -l model -d "Model for the current CLI session" -rxa "(__fish_agy_known_models)"
 
@@ -418,7 +418,7 @@ complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -s e -l env -d "Environment variable KEY=value (repeatable)" -rx
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -s t -l type -d "Server type: 'stdio' or 'http'" -rxa "stdio http"
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -s h -l help -d "Show help"
-complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -a "(__fish_agy_mcp_add_command)" -d "Command"
+complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -a "(__fish_agy_mcp_add_command)" -d Command
 
 # mcp remove
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from remove" -xa "(__fish_agy_mcp_servers)"
@@ -479,7 +479,7 @@ complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -rF
 
 # plugin link
-complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from link" -a "(__fish_agy_plugin_link_arg1)" -d "Marketplace"
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from link" -a "(__fish_agy_plugin_link_arg1)" -d Marketplace
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from link" -a "(__fish_agy_plugin_link_arg2)" -d "Target directory"
 
 # =============================================================================
@@ -503,7 +503,7 @@ complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_
 # help subcommand
 # =============================================================================
 
-complete -c agy -n "__fish_seen_subcommand_from help" -xa "agent changelog install mcp mic-serve models plugin remote-control update" -d "Subcommand"
+complete -c agy -n "__fish_seen_subcommand_from help" -xa "agent changelog install mcp mic-serve models plugin remote-control update" -d Subcommand
 
 # =============================================================================
 # Simple subcommands (help only)

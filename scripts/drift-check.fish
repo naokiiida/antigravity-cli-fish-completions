@@ -58,7 +58,7 @@ function __drift_parse_subcmds
             set -l cmd (string match -rg '^\s{2,4}([a-z][-a-z0-9]*)' -- $line)
             if test -n "$cmd"
                 # Skip "help" if listed as a command
-                string match -q "help" -- $cmd; and continue
+                string match -q help -- $cmd; and continue
 
                 # Extract description if present
                 set -l desc (string match -rg '^\s{2,4}[a-z][-a-z0-9]*(?:\s+\[[^\]]*\])?\s+(.*)' -- $line)
@@ -117,7 +117,7 @@ end
 for cmd in $comp_subcmds
     if not contains -- $cmd $help_subcmds
         # Allow 'help' subcommand which is standard in agy
-        if test "$cmd" = "help"
+        if test "$cmd" = help
             continue
         end
         echo "  WARN: in completions but not in --help: $cmd"
@@ -169,7 +169,7 @@ for subcmd in $subcmd_checks
 
     for cmd in $sub_comp_cmds
         if not contains -- $cmd $sub_help_cmds
-            if test "$cmd" = "help"
+            if test "$cmd" = help
                 continue
             end
             echo "  WARN: in completions but not in help: agy $subcmd $cmd"
@@ -188,9 +188,9 @@ end
 # --- Test 4: Subcommand flags ------------------------------------------------
 
 set -l flag_checks \
-    "install" \
+    install \
     "mcp add" \
-    "mic-serve" \
+    mic-serve \
     "remote-control start"
 
 for subcmd in $flag_checks
@@ -205,7 +205,7 @@ for subcmd in $flag_checks
     for flag in $sub_help_flags
         if not contains -- $flag $sub_comp_flags
             # Skip -h/--help as it's universally added
-            test "$flag" = "help"; and continue
+            test "$flag" = help; and continue
             echo "  MISSING in completions: agy $subcmd --$flag"
             set test_drift 1
         end
@@ -214,7 +214,7 @@ for subcmd in $flag_checks
     # Isolation check: completions should not contain extra flags not present in help (e.g. root flag leakage)
     for flag in $sub_comp_flags
         if not contains -- $flag $sub_help_flags
-            test "$flag" = "help"; and continue
+            test "$flag" = help; and continue
             echo "  EXTRA/LEAKED in completions: agy $subcmd --$flag"
             set test_drift 1
         end
