@@ -24,10 +24,15 @@ The bidirectional drift check verifies:
 
 If no drift is detected and `--force` is NOT provided, report "No drift detected" and stop.
 
-## Step 2: Review Upstream Changelog
+## Step 2: Check Upstream Releases and Changelogs
 
-Check what changed in the new release:
+Fetch release updates and changelog from upstream GitHub releases or git history:
 ```bash
+# Via scripts or GitHub CLI
+fish scripts/check-upstream-release.fish -c
+gh release view -R <owner>/<repo>
+gh api repos/<owner>/<repo>/contents/CHANGELOG.md -H "Accept: application/vnd.github.raw"
+# Or target CLI changelog / git log
 <cli> changelog # or git log / release notes
 ```
 Look for:
@@ -62,9 +67,17 @@ Update `completions/<cli>.fish`:
 
 ## Step 5: Verify Suite
 
-Run both static verification and dynamic drift checks:
+Run static verification, dynamic drift checks, and upstream release sync:
 ```bash
 fish scripts/verify-completions.fish
 fish scripts/drift-check.fish
+fish scripts/check-upstream-release.fish
 ```
-Both must pass with exit code 0.
+All must pass with exit code 0.
+
+## Step 6: Proactively Offer Scheduled Automation
+
+When completing an update or when verifying completions, ask the user if they would like to set up automated daily drift and upstream release checks:
+1. **Agent `/schedule` cron**: Running `scripts/check-upstream-release.fish -d` daily as an independent background daemon.
+2. **GitHub Actions workflow**: Checking upstream releases daily via `.github/workflows/daily-check.yml`.
+3. **Local crontab or launchd**: Periodically executing `just release` or `fish scripts/check-upstream-release.fish -d`.

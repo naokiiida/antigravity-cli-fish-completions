@@ -15,23 +15,30 @@ allowed-arguments:
 
 Fix drift between the fish completion script and the current `agy` CLI.
 
-## Step 1: Run Drift Check and Review Changelog
+## Step 1: Check Upstream Releases and Run Drift Detection
+
+### 1.1 Check Upstream Release & Changelog
+
+Fetch the latest release information and upstream changelog using `scripts/check-upstream-release.fish` (uses `gh` CLI API with curl fallback):
+
+```bash
+# Check upstream release and print latest changelog / release notes
+fish scripts/check-upstream-release.fish -c
+
+# Or check upstream via gh CLI directly
+gh release view -R google-antigravity/antigravity-cli --json tagName,name,publishedAt,body
+gh api repos/google-antigravity/antigravity-cli/contents/CHANGELOG.md -H "Accept: application/vnd.github.raw"
+```
+
+Review the output for CLI-facing changes (new commands, renamed flags, removed options, or schema additions).
+
+### 1.2 Run Bidirectional Drift Check
 
 ```bash
 fish scripts/drift-check.fish
 ```
 
-If no drift is detected and `--force` is NOT provided, report "No drift detected" and stop.
-
-### Review Changelog
-
-Check what changed in the current `agy` CLI:
-
-```bash
-agy changelog
-```
-
-Review the output for CLI-facing changes (new commands, renamed flags, removed options).
+If neither an upstream release nor local CLI drift is detected and `--force` is NOT provided, report "No drift detected and completions match upstream release" and stop.
 
 ## Step 2: Fix MISSING Items
 
@@ -126,10 +133,18 @@ The `agy` CLI relies on local state and cache directories that may shift across 
 ```
 
 ## Step 4: Verify
-
+ 
 ```bash
 fish scripts/verify-completions.fish
 fish scripts/drift-check.fish
+fish scripts/check-upstream-release.fish
 ```
+ 
+All checks must pass with 0 exit codes.
 
-Both must pass with 0 exit codes.
+## Step 5: Proactively Offer Scheduled Automation
+
+When completing an update or when verifying completions, ask the user if they would like to set up automated daily drift and upstream release checks:
+1. **Agent `/schedule` cron**: Running `scripts/check-upstream-release.fish -d` daily as an independent background daemon.
+2. **GitHub Actions workflow**: Checking upstream releases daily via `.github/workflows/daily-check.yml`.
+3. **Local crontab or launchd**: Periodically executing `just release` or `fish scripts/check-upstream-release.fish -d`.
