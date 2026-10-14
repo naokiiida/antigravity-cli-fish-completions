@@ -1,14 +1,19 @@
-# claude-code-fish-completions
+# antigravity-cli-fish-completions
 
-Fish shell tab completions for [Claude Code](https://claude.ai/code) CLI.
+Fish shell tab completions for the [Google Antigravity](https://antigravity.google) CLI (`agy`).
 
 ## Features
 
-- Full coverage of all commands, subcommands, and flags
-- Dynamic completions for plugins, MCP servers, agents, and sessions
-- Hidden command support (`remote-control`)
-- Auto-updated daily via GitHub Actions + Claude Code
-- No external dependencies (no `jq`, no `python3` — pure fish `string` builtins)
+- **Full CLI Coverage**: All top-level flags, subcommands, and nested subcommands matching `agy` v1.3.5+.
+- **Alias Support**: Automatically supports both `agy` and the `antigravity` alias (`complete -c antigravity -w agy`).
+- **Dynamic Completions**:
+  - Recent conversations with human-readable relative time (e.g. `(just now)`, `(5m ago)`, `(2h ago)`).
+  - MCP servers with status-aware filtering (enabled vs disabled).
+  - Installed, enabled, and disabled plugins directly from `agy plugin list --json`.
+  - Configured agents from CLI and workspace definitions.
+  - Available models with descriptions (`gemini-3.8-flash-*`, `claude-*`, etc.).
+- **Zero Dependencies**: Pure Fish builtins using Fish 4+ `path` and `string` — no `jq`, no `python3`, no subshell overhead.
+- **Drift Detection**: Automated drift check and test verification suite to ensure completions stay 100% in sync with CLI releases.
 
 ## Requirements
 
@@ -19,52 +24,46 @@ Fish shell tab completions for [Claude Code](https://claude.ai/code) CLI.
 ### Fisher
 
 ```fish
-fisher install naokiiida/claude-code-fish-completions
+fisher install naokiiida/antigravity-cli-fish-completions
 ```
 
 ### Manual
 
 ```fish
-curl -o ~/.config/fish/completions/claude.fish \
-  https://raw.githubusercontent.com/naokiiida/claude-code-fish-completions/main/completions/claude.fish
+curl -o ~/.config/fish/completions/agy.fish \
+  https://raw.githubusercontent.com/naokiiida/antigravity-cli-fish-completions/main/completions/agy.fish
 ```
 
 ### From source
 
 ```fish
-git clone https://github.com/naokiiida/claude-code-fish-completions.git
-ln -s (pwd)/claude-code-fish-completions/completions/claude.fish ~/.config/fish/completions/claude.fish
+git clone https://github.com/naokiiida/antigravity-cli-fish-completions.git
+ln -s (pwd)/antigravity-cli-fish-completions/completions/agy.fish ~/.config/fish/completions/agy.fish
 ```
 
 ## What's completed
 
 | Area | Coverage |
 |------|----------|
-| Top-level flags | All 40+ flags with descriptions and value suggestions |
-| `mcp` | All subcommands + dynamic server name completion |
-| `auth` | `login`, `logout`, `status` with all flags |
-| `auto-mode` | `config`, `critique`, `defaults` |
-| `plugin` | Full tree including `marketplace` sub-subcommands |
-| `remote-control` | Hidden command with all flags |
-| `install` | Target versions + `--force` |
-| Dynamic | Plugins, MCP servers, agents, sessions, models |
+| Top-level flags | All options (`--continue`, `--conversation`, `--effort`, `--mode`, `--model`, `--output-format`, `--sandbox`, etc.) |
+| `mcp` | `add`, `remove`, `list`, `enable`, `disable` + status-aware dynamic server name completion |
+| `plugin` / `plugins` | Full command tree (`list`, `import`, `install`, `uninstall`, `enable`, `disable`, `validate`, `link`) + dynamic plugin completion |
+| `remote-control` | `start`, `status`, `stop` with all flags (`--name`, `--session`) |
+| `install` | Shell and PATH configuration flags (`--dir`, `--skip-aliases`, `--skip-path`) |
+| `mic-serve` | Remote microphone serving (`--addr`) |
+| `models`, `agent`/`agents` | Model and agent listing commands + flag completion |
+| `help`, `changelog`, `update` | Subcommand completions |
+| Dynamic suggestions | Conversations (with relative timestamps), MCP servers, plugins, models, agents |
 
 ## Verification
 
 ```fish
-# Static checks (no claude CLI needed — runs in CI)
+# Static checks (offline verification — runs in CI)
 fish scripts/verify-completions.fish
 
-# Drift detection (compares completions against claude --help)
+# Drift detection (compares completions against agy --help)
 fish scripts/drift-check.fish
 ```
-
-## Acknowledgments
-
-Built on the work of:
-- [InfiniteRoomLabs/fish-claude-completions](https://github.com/InfiniteRoomLabs/fish-claude-completions)
-- [scaryrawr/claude-code.fish](https://github.com/scaryrawr/claude-code.fish)
-- [wbingli/zsh-claudecode-completion](https://github.com/wbingli/zsh-claudecode-completion) (automation approach)
 
 ## License
 
