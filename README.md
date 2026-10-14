@@ -81,15 +81,26 @@ fisher update .
 | `help`, `changelog`, `update` | Subcommand completions |
 | Dynamic suggestions | Conversations (with relative timestamps), MCP servers, plugins, models, agents |
 
-## Verification
+## Verification & Drift Detection
 
 ```fish
 # Static checks (offline verification — runs in CI)
 fish scripts/verify-completions.fish
 
-# Drift detection (compares completions against agy --help)
+# Drift detection (compares completions against installed agy --help)
 fish scripts/drift-check.fish
+
+# Check upstream GitHub releases & changelog (uses gh CLI API or curl fallback)
+fish scripts/check-upstream-release.fish -c
+
+# Run all checks via Justfile
+just all
 ```
+
+### Automated Monitoring
+
+- **GitHub Actions**: `.github/workflows/daily-check.yml` runs daily at 00:00 UTC to detect new upstream releases and verify completions.
+- **Antigravity CLI Agent**: Scheduled daily cron can be configured via `/schedule` to monitor upstream releases and local drift automatically.
 
 ## License
 

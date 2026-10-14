@@ -11,6 +11,7 @@ Fish shell tab completions for the Google Antigravity CLI (`agy`).
 - **`completions/agy.fish`** — Main completion script. Contains helper functions, subcommand routing, flag definitions, and alias propagation (`antigravity` -> `agy`).
 - **`scripts/verify-completions.fish`** — Static verification (12 tests). Sources the completion file and checks registrations. No external CLI required.
 - **`scripts/drift-check.fish`** — Dynamic drift detection. Compares completions against `agy --help` output and verifies cache/marketplace path resolution. Requires `agy` in PATH. Run as subprocess (`fish scripts/drift-check.fish`).
+- **`scripts/check-upstream-release.fish`** — Upstream release & changelog monitor. Uses `gh` CLI API (with curl fallback) to compare `agy-version` against upstream GitHub releases (`google-antigravity/antigravity-cli`), display release notes, and check for drift.
 - **`agy-version`** — Tracks which `agy` CLI version the completions are based on.
 - **`.agents/skills/update-completions/SKILL.md`** — Antigravity skill for regenerating or updating completions.
 
@@ -53,8 +54,25 @@ fish scripts/verify-completions.fish
 
 # Run drift detection against installed agy CLI
 fish scripts/drift-check.fish
+
+# Check upstream releases & print changelog
+fish scripts/check-upstream-release.fish -c
+
+# Or run everything via just
+just all
 ```
 
-## Tool Preferences
+## Skills Management & Upstream Sync
 
-- Always prefer `rg` over `grep` and `fd` over `find`.
+- Skills from `completions-kit` are managed via the `skills` CLI.
+- **Upstream location**: `/Users/naokiiida/Documents/1_personal/0_skills/completions-kit`
+- When modifying skills in `completions-kit`, **always edit upstream first** at `/Users/naokiiida/Documents/1_personal/0_skills/completions-kit`.
+- Then sync/apply the changes into this repository using:
+  ```bash
+  skills add ../../1_personal/0_skills/completions-kit -y
+  ```
+
+## Development Practices
+
+- **Incremental Commits**: Always make small, atomic, incremental git commits for each logical change rather than batching everything into a single commit.
+- **Tool Preferences**: Always prefer `rg` over `grep` and `fd` over `find`.
