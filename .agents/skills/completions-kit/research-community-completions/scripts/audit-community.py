@@ -113,7 +113,7 @@ def audit_cli(cli_name: str) -> str:
         reports.append(f"- *Status*: No native completion bundled in Fish for `{cli_name}`.")
         reports.append("")
 
-    # 2. Carapace Completer Check (Local clone or specs if available)
+    # 2. Carapace Completer Check (Local spec or live via GitHub API)
     carapace_spec = Path.home() / ".config" / "carapace" / "specs" / f"{cli_name}.yaml"
     if carapace_spec.exists():
         stat = carapace_spec.stat()
@@ -124,8 +124,38 @@ def audit_cli(cli_name: str) -> str:
         reports.append(f"- **Evaluation**: {reason}")
         reports.append("")
     else:
+        carapace_commit = None
+        if shutil.which("gh"):
+            try:
+                proc = subprocess.run(
+                    ["gh", "api", f"repos/carapace-sh/carapace-bin/commits?path=completers/common/{cli_name}_completer&per_page=1"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=5,
+                )
+                if proc.returncode == 0 and proc.stdout.strip():
+                    data = json.loads(proc.stdout)
+                    if isinstance(data, list) and len(data) > 0:
+                        c = data[0]
+                        date_str = c.get("commit", {}).get("committer", {}).get("date")
+                        msg = c.get("commit", {}).get("message", "").splitlines()[0]
+                        if date_str:
+                            c_date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+                            carapace_commit = (c_date, msg)
+            except Exception:
+                pass
+
         reports.append(f"### 2. Carapace Completer (`rsteube/carapace-bin`)")
-        reports.append(f"- *Status*: Check online at `https://github.com/carapace-sh/carapace-bin/tree/master/completers/common/{cli_name}_completer`.")
+        if carapace_commit:
+            c_date, msg = carapace_commit
+            score, reason = score_freshness(c_date, None, cli_version)
+            reports.append(f"- **Online Path**: `carapace-bin/completers/common/{cli_name}_completer`")
+            reports.append(f"- **Last Commit**: `{c_date.strftime('%Y-%m-%d')}` — *\"{msg}\"*")
+            reports.append(f"- **Trust Score**: {score}")
+            reports.append(f"- **Evaluation**: {reason}")
+        else:
+            reports.append(f"- *Status*: Check online at `https://github.com/carapace-sh/carapace-bin/tree/master/completers/common/{cli_name}_completer`.")
         reports.append(f"- **Heuristic Caution**: Always verify Carapace Go completers against live `{cli_name} --help`. Handwritten community completers in Carapace often contain phantom commands or obsolete flags.")
         reports.append("")
 
