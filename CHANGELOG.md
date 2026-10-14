@@ -2,6 +2,18 @@
 
 All notable changes to antigravity-cli-fish-completions are documented here.
 
+## [Unreleased]
+
+### Added
+- Positional command/executable completion for argument 2 of `agy mcp add <name> <commandOrUrl>`.
+- Positional completion for `agy plugin install` (local directories and cached marketplace plugins).
+- Positional completion for `agy plugin link` (available marketplace names and target directories).
+- Multi-path cache directory discovery (`__fish_agy_cache_dir`) supporting environment overrides (`ANTIGRAVITY_CACHE_DIR`, `ANTIGRAVITY_APP_DATA_DIR`, `GEMINI_CLI_HOME`), CLI defaults, and XDG/OS standards.
+- Preset duration suggestions for `--print-timeout` (`30s 1m 5m 10m 1h`).
+- Cache and marketplace path health check (Test 5) in `scripts/drift-check.fish`.
+- Positional completion and timeout preset regression checks in `scripts/verify-completions.fish` (expanded to 12 tests).
+- Updated skill guide in `.agents/skills/update-completions/SKILL.md` detailing dynamic data sources, cache probing, and token count patterns.
+
 ## [1.3.5] - 2026-10-14
 
 ### Added

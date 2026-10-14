@@ -24,7 +24,7 @@ set -g fish_complete_path "$repo_root/completions"
 
 echo "Verifying completion script: $completion_file"
 
-set -l total_tests 11
+set -l total_tests 12
 
 # Test 1: Syntax check
 echo "  [1/$total_tests] Running syntax check..."
@@ -95,7 +95,11 @@ end
 echo "  [6/$total_tests] Checking helper functions..."
 for fn in __fish_agy_conversations __fish_agy_agents __fish_agy_mcp_servers \
           __fish_agy_mcp_enabled_servers __fish_agy_mcp_disabled_servers \
-          __fish_agy_installed_plugins __fish_agy_enabled_plugins __fish_agy_disabled_plugins
+          __fish_agy_installed_plugins __fish_agy_enabled_plugins __fish_agy_disabled_plugins \
+          __fish_agy_cache_dir __fish_agy_marketplace_dirs __fish_agy_marketplaces \
+          __fish_agy_marketplace_plugins __fish_agy_mcp_add_command \
+          __fish_agy_plugin_install_target __fish_agy_plugin_link_token_count \
+          __fish_agy_plugin_link_arg1 __fish_agy_plugin_link_arg2
     if not functions -q $fn
         echo "FAIL: Missing helper function: $fn"
         exit 1
@@ -140,6 +144,14 @@ for val in accept-edits auto plan
     end
 end
 
+set -l timeout_completions (complete -C "agy --print-timeout " 2>/dev/null)
+for val in 30s 1m 5m 10m 1h
+    if not string match -q "*$val*" -- $timeout_completions
+        echo "FAIL: Missing print-timeout preset value: $val"
+        exit 1
+    end
+end
+
 # Test 10: No legacy external commands (regression guard)
 echo "  [10/$total_tests] Checking for legacy external commands..."
 set -l src (cat "$completion_file")
@@ -158,6 +170,26 @@ for leaked in continue conversation effort mode model print sandbox
         echo "FAIL: Leaked top-level flag into subcommand: --$leaked"
         exit 1
     end
+end
+
+# Test 12: Check positional completions (mcp add, plugin install, plugin link)
+echo "  [12/$total_tests] Checking positional completions..."
+set -l mcp_add_cmd (complete -C "agy mcp add test-server " 2>/dev/null)
+if test (count $mcp_add_cmd) -lt 5
+    echo "FAIL: mcp add failed to provide command completions (got "(count $mcp_add_cmd)")"
+    exit 1
+end
+
+set -l plugin_install_comp (complete -C "agy plugin install " 2>/dev/null)
+if test (count $plugin_install_comp) -lt 1
+    echo "FAIL: plugin install failed to provide completions"
+    exit 1
+end
+
+set -l plugin_link_comp (complete -C "agy plugin link " 2>/dev/null)
+if not string match -q "*antigravity-plugins-official*" -- $plugin_link_comp
+    echo "FAIL: plugin link failed to complete marketplace name"
+    exit 1
 end
 
 echo ""

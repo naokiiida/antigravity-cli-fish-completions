@@ -9,8 +9,8 @@ Fish shell tab completions for the Google Antigravity CLI (`agy`).
 ## Key Files
 
 - **`completions/agy.fish`** — Main completion script. Contains helper functions, subcommand routing, flag definitions, and alias propagation (`antigravity` -> `agy`).
-- **`scripts/verify-completions.fish`** — Static verification (11 tests). Sources the completion file and checks registrations. No external CLI required.
-- **`scripts/drift-check.fish`** — Dynamic drift detection. Compares completions against `agy --help` output. Requires `agy` in PATH. Run as subprocess (`fish scripts/drift-check.fish`).
+- **`scripts/verify-completions.fish`** — Static verification (12 tests). Sources the completion file and checks registrations. No external CLI required.
+- **`scripts/drift-check.fish`** — Dynamic drift detection. Compares completions against `agy --help` output and verifies cache/marketplace path resolution. Requires `agy` in PATH. Run as subprocess (`fish scripts/drift-check.fish`).
 - **`agy-version`** — Tracks which `agy` CLI version the completions are based on.
 - **`.agents/skills/update-completions/SKILL.md`** — Antigravity skill for regenerating or updating completions.
 
@@ -18,7 +18,7 @@ Fish shell tab completions for the Google Antigravity CLI (`agy`).
 
 The completion file has these sections (in order):
 1. Header + `complete -c agy -f` + `complete -c antigravity -w agy`
-2. Helper functions (`__fish_agy_*` for conversations, agents, MCP servers, and plugins)
+2. Helper functions (`__fish_agy_*` for conversations, agents, MCP servers, plugins, cache discovery, and marketplaces)
 3. Subcommand registrations via `__fish_use_subcommand`
 4. Top-level flag definitions
 5. Per-subcommand sections (`install`, `mcp`, `mic-serve`, `plugin`, `remote-control`, `help`)
@@ -30,7 +30,12 @@ Helper functions provide live, responsive completions:
 - `__fish_agy_agents`: Retrieves agents from `command agy agents` and workspace agent definitions.
 - `__fish_agy_mcp_servers`: Configured MCP servers from `~/.gemini/antigravity-cli/mcp/` and `agy mcp list`.
 - `__fish_agy_mcp_enabled_servers` / `__fish_agy_mcp_disabled_servers`: Filtered servers for `disable` and `enable`.
+- `__fish_agy_mcp_add_command`: Completes system commands/executables for the 2nd positional argument of `agy mcp add`.
 - `__fish_agy_installed_plugins` / `__fish_agy_enabled_plugins` / `__fish_agy_disabled_plugins`: Parsed directly from `agy plugin list --json`.
+- `__fish_agy_cache_dir`: Probes candidate cache directories across env vars, default CLI path, and XDG/OS standards.
+- `__fish_agy_marketplace_dirs` / `__fish_agy_marketplaces`: Discovers available plugin marketplaces.
+- `__fish_agy_marketplace_plugins`: Parses cached marketplace catalogs (`marketplace.json`) for `agy plugin install`.
+- `__fish_agy_plugin_install_target` / `__fish_agy_plugin_link_*`: Positional argument handlers for plugin install and link.
 
 No `jq` or `python` dependency — all JSON and string parsing uses pure fish `string` builtins.
 

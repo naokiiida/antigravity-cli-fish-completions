@@ -218,6 +218,24 @@ for subcmd in $flag_checks
     set drift (math "$drift + $test_drift")
 end
 
+# --- Test 5: Cache and marketplace directory health --------------------------
+
+echo "Drift check: cache & marketplace directory resolution"
+
+set -l resolved_cache (__fish_agy_cache_dir)
+if test -z "$resolved_cache"; or not test -d "$resolved_cache"
+    echo "  WARN: agy cache directory not found or unresolvable by __fish_agy_cache_dir"
+    set warnings (math $warnings + 1)
+else
+    set -l mp_dirs (__fish_agy_marketplace_dirs)
+    if test (count $mp_dirs) -eq 0
+        echo "  WARN: No marketplace directories found under $resolved_cache"
+        set warnings (math $warnings + 1)
+    else
+        echo "  OK"
+    end
+end
+
 # --- Summary ------------------------------------------------------------------
 
 echo ""

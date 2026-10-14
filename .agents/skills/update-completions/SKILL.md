@@ -69,6 +69,13 @@ complete -c agy -n "__fish_seen_subcommand_from subcmd" -l flag -d "Description"
 
 # Dynamic completion using helper function
 complete -c agy -n "CONDITION" -xa "(helper_function)"
+
+# Positional argument with directory & dynamic catalog completion
+complete -c agy -n "CONDITION" -a "(__fish_complete_directories)" -d "Directory"
+complete -c agy -n "CONDITION" -a "(helper_function)"
+
+# Command/executable completion for positional argument
+complete -c agy -n "CONDITION" -a "(__fish_complete_command)" -d "Command"
 ```
 
 ### Rules
@@ -76,7 +83,25 @@ complete -c agy -n "CONDITION" -xa "(helper_function)"
 - Helper functions parse output using fish `string` builtins — no jq/python3.
 - **REQUIRED (Fish 4.0+)**: Use `path basename -E` instead of `basename`, `path mtime -R` instead of `stat`/`date`. Never use the external `basename`/`stat`/`date` commands.
 - Descriptions (`-d`) should match the CLI help text.
+- Positional argument completions must inspect `commandline -cop` token counts to avoid leaking into subsequent arguments or prior flags.
 - When adding/removing subcommands, flags, or helper functions, also update the hardcoded regression guards in `scripts/verify-completions.fish`.
+
+### Cache Directory Anticipation & Dynamic Sources
+
+The `agy` CLI relies on local state and cache directories that may shift across releases or platforms:
+- **Cache Path Resolution (`__fish_agy_cache_dir`)**: Probes candidates in priority order:
+  1. Environment overrides: `$ANTIGRAVITY_CACHE_DIR`, `$ANTIGRAVITY_APP_DATA_DIR/cache`, `$GEMINI_CLI_HOME/cache`.
+  2. CLI default path: `~/.gemini/antigravity-cli/cache`.
+  3. Standards: `$XDG_CACHE_HOME/antigravity-cli`, `~/.cache/antigravity-cli`, `~/Library/Caches/antigravity-cli`.
+- **Marketplace Discovery (`__fish_agy_marketplace_dirs`)**: Probes `$cache_dir/marketplaces` and standalone paths (`~/.gemini/antigravity-cli/marketplaces`, `~/.gemini/config/marketplaces`).
+- **Anticipating CLI Cache Relocations**: When upgrading `agy`, run `fish scripts/drift-check.fish`. Test 5 specifically verifies that cache and marketplace paths resolve. If Google Antigravity renames or relocates cache folders, add the new path to `__fish_agy_cache_dir` candidate list.
+- **Dynamic Completions Inventory**:
+  - `__fish_agy_conversations`: Formatted with relative time from `.db` mtime.
+  - `__fish_agy_agents`: CLI agents + custom agent `.md` frontmatter descriptions.
+  - `__fish_agy_mcp_servers` / `__fish_agy_mcp_enabled_servers` / `__fish_agy_mcp_disabled_servers`: State-aware MCP server listing.
+  - `__fish_agy_installed_plugins` / `__fish_agy_enabled_plugins` / `__fish_agy_disabled_plugins`: State-aware plugin listing from JSON.
+  - `__fish_agy_marketplace_plugins`: Pure fish parser for `marketplace.json` plugin catalogs.
+  - `__fish_agy_mcp_add_command`: Command completion for argument 2 of `mcp add`.
 
 ## Step 3: Update Version and Changelog
 

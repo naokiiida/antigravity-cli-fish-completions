@@ -163,6 +163,170 @@ function __fish_agy_disabled_plugins
     end
 end
 
+function __fish_agy_cache_dir
+    # Priority 1: User & environment variable overrides
+    if set -q ANTIGRAVITY_CACHE_DIR; and test -d "$ANTIGRAVITY_CACHE_DIR"
+        echo "$ANTIGRAVITY_CACHE_DIR"
+        return
+    end
+    if set -q ANTIGRAVITY_APP_DATA_DIR; and test -d "$ANTIGRAVITY_APP_DATA_DIR/cache"
+        echo "$ANTIGRAVITY_APP_DATA_DIR/cache"
+        return
+    end
+    if set -q GEMINI_CLI_HOME; and test -d "$GEMINI_CLI_HOME/cache"
+        echo "$GEMINI_CLI_HOME/cache"
+        return
+    end
+
+    # Priority 2: Standard CLI location
+    if test -d "$HOME/.gemini/antigravity-cli/cache"
+        echo "$HOME/.gemini/antigravity-cli/cache"
+        return
+    end
+
+    # Priority 3: XDG and OS standard cache locations
+    if set -q XDG_CACHE_HOME; and test -d "$XDG_CACHE_HOME/antigravity-cli"
+        echo "$XDG_CACHE_HOME/antigravity-cli"
+        return
+    else if test -d "$HOME/.cache/antigravity-cli"
+        echo "$HOME/.cache/antigravity-cli"
+        return
+    end
+    if test -d "$HOME/Library/Caches/antigravity-cli"
+        echo "$HOME/Library/Caches/antigravity-cli"
+        return
+    end
+end
+
+function __fish_agy_marketplace_dirs
+    set -l cache_dir (__fish_agy_cache_dir)
+    if test -n "$cache_dir" -a -d "$cache_dir/marketplaces"
+        echo "$cache_dir/marketplaces"
+    end
+    # Also probe alternative / future standalone marketplace paths
+    for dir in "$HOME/.gemini/antigravity-cli/marketplaces" "$HOME/.gemini/config/marketplaces"
+        test -d "$dir"; and echo "$dir"
+    end
+end
+
+function __fish_agy_marketplaces
+    for mp_dir in (__fish_agy_marketplace_dirs)
+        for d in "$mp_dir"/*/
+            test -d "$d"; or continue
+            path basename "$d"
+        end
+    end
+end
+
+function __fish_agy_marketplace_plugins
+    for mp_dir in (__fish_agy_marketplace_dirs)
+        for f in "$mp_dir"/*/marketplace.json
+            test -f "$f"; or continue
+            set -l in_plugin 0
+            set -l name ""
+            set -l desc ""
+            while read -l line
+                if string match -qr '"name":\s*"([^"]+)"' -- $line
+                    set -l m (string match -r '"name":\s*"([^"]+)"' -- $line)
+                    if test $in_plugin -eq 0
+                        set in_plugin 1
+                        continue
+                    end
+                    set name $m[2]
+                else if test $in_plugin -eq 1 -a -n "$name"; and string match -qr '"description":\s*"([^"]+)"' -- $line
+                    set -l m (string match -r '"description":\s*"([^"]+)"' -- $line)
+                    set desc $m[2]
+                    printf '%s\t%s\n' "$name" "$desc"
+                    set name ""
+                    set desc ""
+                end
+            end < "$f"
+        end
+    end
+end
+
+function __fish_agy_mcp_add_command
+    set -l tokens (commandline -cop)
+    set -l add_idx 0
+    for i in (seq (count $tokens))
+        if test "$tokens[$i]" = "add"
+            set add_idx $i
+            break
+        end
+    end
+    test $add_idx -gt 0; or return 1
+
+    set -l pos_args 0
+    set -l in_skip 0
+    for tok in $tokens[(math $add_idx + 1)..-1]
+        if test $in_skip -eq 1
+            set in_skip 0
+            continue
+        end
+        if string match -q -- '-*' $tok
+            if contains -- $tok -H --header -e --env -t --type
+                set in_skip 1
+            end
+            continue
+        end
+        set pos_args (math $pos_args + 1)
+    end
+    # Argument 1 is <name>, Argument 2 is <commandOrUrl>
+    if test $pos_args -eq 1
+        __fish_complete_command
+    end
+end
+
+function __fish_agy_plugin_install_target
+    set -l tokens (commandline -cop)
+    set -l idx 0
+    for i in (seq (count $tokens))
+        if test "$tokens[$i]" = "install"
+            set idx $i
+            break
+        end
+    end
+    test $idx -gt 0; or return 1
+
+    set -l pos_args 0
+    for tok in $tokens[(math $idx + 1)..-1]
+        string match -q -- '-*' $tok; and continue
+        set pos_args (math $pos_args + 1)
+    end
+    test $pos_args -eq 0; or return 1
+    __fish_complete_directories
+    __fish_agy_marketplace_plugins
+end
+
+function __fish_agy_plugin_link_token_count
+    set -l tokens (commandline -cop)
+    set -l link_idx 0
+    for i in (seq (count $tokens))
+        if test "$tokens[$i]" = "link"
+            set link_idx $i
+            break
+        end
+    end
+    test $link_idx -gt 0; or return 1
+
+    set -l pos_args 0
+    for tok in $tokens[(math $link_idx + 1)..-1]
+        string match -q -- '-*' $tok; and continue
+        set pos_args (math $pos_args + 1)
+    end
+    echo $pos_args
+end
+
+function __fish_agy_plugin_link_arg1
+    test (__fish_agy_plugin_link_token_count) -eq 0; or return 1
+    __fish_agy_marketplaces
+end
+
+function __fish_agy_plugin_link_arg2
+    test (__fish_agy_plugin_link_token_count) -eq 1; or return 1
+    __fish_complete_directories
+end
+
 # =============================================================================
 # Subcommands (when no subcommand present)
 # Canonical subcommands only (aliases like `agents` and `plugins` are hidden)
@@ -224,7 +388,7 @@ complete -c agy -n __fish_use_subcommand -l add-dir -d "Add a directory to the w
 
 # File and string value flags
 complete -c agy -n __fish_use_subcommand -s i -l prompt-interactive -d "Run an initial prompt interactively and continue the session" -rx
-complete -c agy -n __fish_use_subcommand -l print-timeout -d "Optional time limit for print mode (e.g. 30s, 5m)" -rx
+complete -c agy -n __fish_use_subcommand -l print-timeout -d "Optional time limit for print mode (e.g. 30s, 5m)" -rxa "30s 1m 5m 10m 1h"
 complete -c agy -n __fish_use_subcommand -l project -d "Project ID or project name for the current CLI session" -rx
 complete -c agy -n __fish_use_subcommand -l json-schema -d "Optional JSON schema string or path to schema file" -rF
 complete -c agy -n __fish_use_subcommand -l log-file -d "Override CLI log file path" -rF
@@ -254,6 +418,7 @@ complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -s e -l env -d "Environment variable KEY=value (repeatable)" -rx
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -s t -l type -d "Server type: 'stdio' or 'http'" -rxa "stdio http"
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -s h -l help -d "Show help"
+complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from add" -a "(__fish_agy_mcp_add_command)" -d "Command"
 
 # mcp remove
 complete -c agy -n "__fish_seen_subcommand_from mcp; and __fish_seen_subcommand_from remove" -xa "(__fish_agy_mcp_servers)"
@@ -298,6 +463,9 @@ complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_
 # plugin import
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from import" -xa "gemini claude" -d "Import source"
 
+# plugin install
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from install" -a "(__fish_agy_plugin_install_target)"
+
 # plugin uninstall
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from uninstall" -xa "(__fish_agy_installed_plugins)"
 
@@ -309,6 +477,10 @@ complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_
 
 # plugin validate
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -rF
+
+# plugin link
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from link" -a "(__fish_agy_plugin_link_arg1)" -d "Marketplace"
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from link" -a "(__fish_agy_plugin_link_arg2)" -d "Target directory"
 
 # =============================================================================
 # remote-control subcommand
