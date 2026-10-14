@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "completions-kit": {
+      "source": "../../1_personal/0_skills/completions-kit",
+      "sourceType": "local",
+      "computedHash": "92d4cc90037ddf7c7b827fa77b9eb241cd8af43fbe1862d3f25baae4ca18a562"
+    }
+  }
+}

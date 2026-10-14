@@ -1,0 +1,53 @@
+# completions-kit — Deterministic CLI completion generation and maintenance kit
+# Generates zero-leak, pure-Fish 4.0+ shell completions from CLI introspection & binary inspection.
+
+set shell := ["bash", "-uo", "pipefail", "-c"]
+
+KIT := justfile_directory()
+
+# Show available recipes
+default:
+    @echo "completions-kit — deterministic CLI completion & skill toolkit"
+    @echo
+    @echo "  crawl:      just crawl <cli> [out.json]          Crawl CLI tree (--help + binary inspection)"
+    @echo "  generate:   just generate <spec.json> [out.fish] Compile JSON spec to pure Fish 4.0+ completions"
+    @echo "  pipeline:   just pipeline <cli> <dest-dir>       Full end-to-end greenfield completion generation"
+    @echo "  audit:      just audit <cli>                     Audit prior community completions (Carapace, Fish, Zsh)"
+    @echo "  verify:     just verify <completion.fish>        Run static syntax and isolation tests"
+    @echo "  test:       just test                            Run toolkit test suite"
+    @echo
+
+# Crawl a CLI into a canonical JSON AST
+crawl cli out="":
+    @if [ -z "{{out}}" ]; then \
+        python3 "{{KIT}}/generate-fish-completions/scripts/crawl-cli.py" "{{cli}}" ; \
+    else \
+        python3 "{{KIT}}/generate-fish-completions/scripts/crawl-cli.py" "{{cli}}" -o "{{out}}" ; \
+    fi
+
+# Compile JSON spec into Fish completions
+generate spec out="":
+    @if [ -z "{{out}}" ]; then \
+        python3 "{{KIT}}/generate-fish-completions/scripts/generate-fish.py" "{{spec}}" ; \
+    else \
+        python3 "{{KIT}}/generate-fish-completions/scripts/generate-fish.py" "{{spec}}" -o "{{out}}" ; \
+    fi
+
+# Full pipeline: crawl -> generate -> scaffold test harness
+pipeline cli dest:
+    @mkdir -p "{{dest}}/completions" "{{dest}}/scripts"
+    @echo "1. Crawling {{cli}}..."
+    @python3 "{{KIT}}/generate-fish-completions/scripts/crawl-cli.py" "{{cli}}" -o "{{dest}}/{{cli}}.spec.json"
+    @echo "2. Compiling Fish completions..."
+    @python3 "{{KIT}}/generate-fish-completions/scripts/generate-fish.py" "{{dest}}/{{cli}}.spec.json" -o "{{dest}}/completions/{{cli}}.fish"
+    @echo "3. Scaffolding tests..."
+    @python3 "{{KIT}}/generate-fish-completions/scripts/generate-fish.py" "{{dest}}/{{cli}}.spec.json" --scaffold-tests "{{dest}}"
+    @echo "Done! Run: fish {{dest}}/scripts/verify-completions.fish"
+
+# Audit community completions against live CLI
+audit cli:
+    @python3 "{{KIT}}/research-community-completions/scripts/audit-community.py" "{{cli}}"
+
+# Run test suite
+test:
+    @python3 -m unittest discover -s "{{KIT}}/tests" -p "*_test.py"
