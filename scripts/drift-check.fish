@@ -29,6 +29,9 @@ if not test -f "$completion_file"
     exit 1
 end
 
+# Isolate completion path so drift check tests local completions
+set -g fish_complete_path "$repo_root/completions"
+
 source "$completion_file"
 
 set -l drift 0
@@ -38,8 +41,10 @@ set -l warnings 0
 
 # Parse subcommands from a help output.
 # Reads stdin, prints one subcommand per line.
+# Deduplicates subcommands with identical descriptions and hides aliases.
 function __drift_parse_subcmds
     set -l in_commands 0
+    set -l seen_descs
     while read -l line
         if string match -q "*Available subcommands:*" -- $line; or string match -q "*Commands:*" -- $line
             set in_commands 1
@@ -54,6 +59,20 @@ function __drift_parse_subcmds
             if test -n "$cmd"
                 # Skip "help" if listed as a command
                 string match -q "help" -- $cmd; and continue
+
+                # Extract description if present
+                set -l desc (string match -rg '^\s{2,4}[a-z][-a-z0-9]*(?:\s+\[[^\]]*\])?\s+(.*)' -- $line)
+                if test -n "$desc"
+                    # Skip aliases: marked "Alias for ..." or duplicate description (only show first)
+                    if string match -qr '^Alias for' -- $desc
+                        continue
+                    end
+                    if contains -- "$desc" $seen_descs
+                        continue
+                    end
+                    set -a seen_descs "$desc"
+                end
+
                 echo $cmd
             end
         end

@@ -1,7 +1,8 @@
 # Fish shell completions for Google Antigravity CLI (agy)
 # https://github.com/naokiiida/antigravity-cli-fish-completions
 
-# Disable file completions by default
+# Clear existing completions and disable file completions by default
+complete -c agy -e
 complete -c agy -f
 
 # Propagate completions to common alias
@@ -164,10 +165,10 @@ end
 
 # =============================================================================
 # Subcommands (when no subcommand present)
+# Canonical subcommands only (aliases like `agents` and `plugins` are hidden)
 # =============================================================================
 
 complete -c agy -n __fish_use_subcommand -xa agent -d "List available agents"
-complete -c agy -n __fish_use_subcommand -xa agents -d "List available agents"
 complete -c agy -n __fish_use_subcommand -xa changelog -d "Show changelog and release notes"
 complete -c agy -n __fish_use_subcommand -xa help -d "Show help for subcommands"
 complete -c agy -n __fish_use_subcommand -xa install -d "Configure environment paths and shell settings"
@@ -175,7 +176,6 @@ complete -c agy -n __fish_use_subcommand -xa mcp -d "Manage MCP servers (add, re
 complete -c agy -n __fish_use_subcommand -xa mic-serve -d "Serve this machine's microphone to a CLI on another host"
 complete -c agy -n __fish_use_subcommand -xa models -d "List available models"
 complete -c agy -n __fish_use_subcommand -xa plugin -d "Manage plugins (install, uninstall, list, enable, disable)"
-complete -c agy -n __fish_use_subcommand -xa plugins -d "Manage plugins (install, uninstall, list, enable, disable)"
 complete -c agy -n __fish_use_subcommand -xa remote-control -d "Manage the remote-control background daemon (start, status, stop)"
 complete -c agy -n __fish_use_subcommand -xa update -d "Update CLI"
 
@@ -202,18 +202,20 @@ complete -c agy -l input-format -d "Input format for print mode" -rxa "text stre
 complete -c agy -l output-format -d "Output format for print mode" -rxa "text json stream-json"
 
 # Model completion (known available models + descriptions)
-set -l __agy_known_models \
-    "gemini-3.8-flash-high\tGemini 3.8 Flash (High)" \
-    "gemini-3.8-flash-medium\tGemini 3.8 Flash (Medium)" \
-    "gemini-3.8-flash-low\tGemini 3.8 Flash (Low)" \
-    "claude-opus-5-5-high\tClaude Opus 5.5 (High)" \
-    "claude-opus-5-5-medium\tClaude Opus 5.5 (Medium)" \
-    "claude-opus-5-5-low\tClaude Opus 5.5 (Low)" \
-    "claude-sonnet-5-5-high\tClaude Sonnet 5.5 (High)" \
-    "claude-sonnet-5-5-medium\tClaude Sonnet 5.5 (Medium)" \
-    "claude-sonnet-5-5-low\tClaude Sonnet 5.5 (Low)" \
-    "gpt-oss-120b-medium\tGPT-OSS 120B (Medium)"
-complete -c agy -l model -d "Model for the current CLI session" -rxa "$__agy_known_models"
+function __fish_agy_known_models
+    printf '%s\t%s\n' \
+        "gemini-3.8-flash-high" "Gemini 3.8 Flash (High)" \
+        "gemini-3.8-flash-medium" "Gemini 3.8 Flash (Medium)" \
+        "gemini-3.8-flash-low" "Gemini 3.8 Flash (Low)" \
+        "claude-opus-5-5-high" "Claude Opus 5.5 (High)" \
+        "claude-opus-5-5-medium" "Claude Opus 5.5 (Medium)" \
+        "claude-opus-5-5-low" "Claude Opus 5.5 (Low)" \
+        "claude-sonnet-5-5-high" "Claude Sonnet 5.5 (High)" \
+        "claude-sonnet-5-5-medium" "Claude Sonnet 5.5 (Medium)" \
+        "claude-sonnet-5-5-low" "Claude Sonnet 5.5 (Low)" \
+        "gpt-oss-120b-medium" "GPT-OSS 120B (Medium)"
+end
+complete -c agy -l model -d "Model for the current CLI session" -rxa "(__fish_agy_known_models)"
 
 # Dynamic value flags
 complete -c agy -l conversation -d "Resume a previous conversation by ID" -rxa "(__fish_agy_conversations)"
@@ -329,7 +331,7 @@ complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_
 # help subcommand
 # =============================================================================
 
-complete -c agy -n "__fish_seen_subcommand_from help" -xa "agent agents changelog install mcp mic-serve models plugin plugins remote-control update" -d "Subcommand"
+complete -c agy -n "__fish_seen_subcommand_from help" -xa "agent changelog install mcp mic-serve models plugin remote-control update" -d "Subcommand"
 
 # =============================================================================
 # Simple subcommands (help only)

@@ -19,6 +19,9 @@ if not test -f "$completion_file"
     exit 1
 end
 
+# Isolate completion path so tests do not autoload stale installed completions
+set -g fish_complete_path "$repo_root/completions"
+
 echo "Verifying completion script: $completion_file"
 
 set -l total_tests 10
@@ -40,10 +43,20 @@ if test (count $completions) -lt 5
     exit 1
 end
 
-set -l required_subcommands agent agents changelog help install mcp mic-serve models plugin plugins remote-control update
+set -l completion_tokens (string replace -r '\t.*' '' -- $completions)
+set -l required_subcommands agent changelog help install mcp mic-serve models plugin remote-control update
 for cmd in $required_subcommands
-    if not string match -q "*$cmd*" -- $completions
+    if not contains -- $cmd $completion_tokens
         echo "FAIL: Missing subcommand: $cmd"
+        exit 1
+    end
+end
+
+# Regression guard: aliases should be hidden from top-level completions
+set -l hidden_aliases agents plugins
+for alias_cmd in $hidden_aliases
+    if contains -- $alias_cmd $completion_tokens
+        echo "FAIL: Alias should be hidden from top-level completions: $alias_cmd"
         exit 1
     end
 end
