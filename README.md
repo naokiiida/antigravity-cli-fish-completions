@@ -8,8 +8,9 @@ Fish shell tab completions for the [Google Antigravity](https://antigravity.goog
 - **Alias Support**: Automatically supports both `agy` and the `antigravity` alias (`complete -c antigravity -w agy`).
 - **Dynamic Completions**:
   - Recent conversations with human-readable relative time (e.g. `(just now)`, `(5m ago)`, `(2h ago)`).
-  - MCP servers with status-aware filtering (enabled vs disabled).
+  - MCP servers with status-aware filtering (enabled vs disabled) and executable/command completion for `mcp add`.
   - Installed, enabled, and disabled plugins directly from `agy plugin list --json`.
+  - Dynamic marketplace plugin catalog discovery (`marketplace.json`) for `agy plugin install` and `agy plugin link`.
   - Configured agents from CLI and workspace definitions.
   - Available models with descriptions (`gemini-3.8-flash-*`, `claude-*`, etc.).
 - **Zero Dependencies**: Pure Fish builtins using Fish 4+ `path` and `string` — no `jq`, no `python3`, no subshell overhead.
@@ -27,6 +28,12 @@ Fish shell tab completions for the [Google Antigravity](https://antigravity.goog
 fisher install naokiiida/antigravity-cli-fish-completions
 ```
 
+For local development or from a local clone:
+
+```fish
+fisher install .
+```
+
 ### Manual
 
 ```fish
@@ -39,6 +46,25 @@ curl -o ~/.config/fish/completions/agy.fish \
 ```fish
 git clone https://github.com/naokiiida/antigravity-cli-fish-completions.git
 ln -s (pwd)/antigravity-cli-fish-completions/completions/agy.fish ~/.config/fish/completions/agy.fish
+```
+
+## Update
+
+### Fisher
+
+To update completions when installed from GitHub:
+
+```fish
+fisher update naokiiida/antigravity-cli-fish-completions
+# or update all plugins:
+fisher update
+```
+
+When developing locally or installed from a local clone:
+
+```fish
+# Inside the cloned repository directory:
+fisher update .
 ```
 
 ## What's completed
