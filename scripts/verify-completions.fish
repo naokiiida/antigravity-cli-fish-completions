@@ -91,6 +91,14 @@ for subcmd in list import install uninstall enable disable validate link
     end
 end
 
+set -l validate_completions (complete -C "agy plugin validate -" 2>/dev/null)
+for flag in strict json
+    if not string match -q "*$flag*" -- $validate_completions
+        echo "FAIL: Missing plugin validate flag: --$flag"
+        exit 1
+    end
+end
+
 # Test 6: Helper function existence
 echo "  [6/$total_tests] Checking helper functions..."
 for fn in __fish_agy_conversations __fish_agy_agents __fish_agy_mcp_servers \
