@@ -4,7 +4,14 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-10-20
+
 ### Added
+- Added `gemini-4-argon-high`, `gemini-4-argon-medium`, and `gemini-4-argon-low` to `--model` completion suggestions.
+- Added `--strict` (`-d "Fail on warnings"`) and `--json` (`-d "Output validation report as JSON"`) flags to `agy plugin validate`.
+- Added flag assertions for `agy plugin validate` in `scripts/verify-completions.fish`.
+- Added `"plugin validate"` to `flag_checks` in `scripts/drift-check.fish`.
+- Enhanced `__drift_parse_flags` in `scripts/drift-check.fish` to extract flags from inline usage lines (`[--flag]`).
 - Positional command/executable completion for argument 2 of `agy mcp add <name> <commandOrUrl>`.
 - Positional completion for `agy plugin install` (local directories and cached marketplace plugins).
 - Positional completion for `agy plugin link` (available marketplace names and target directories).
@@ -12,7 +19,14 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 - Preset duration suggestions for `--print-timeout` (`30s 1m 5m 10m 1h`).
 - Cache and marketplace path health check (Test 5) in `scripts/drift-check.fish`.
 - Positional completion and timeout preset regression checks in `scripts/verify-completions.fish` (expanded to 12 tests).
+- Automated daily workflow for upstream release & drift checks (`.github/workflows/daily-check.yml`).
+- Upstream release and changelog monitoring script (`scripts/check-upstream-release.fish`).
+- Justfile task runner (`just all`, `just verify`, `just drift`, `just check-upstream`).
 - Updated skill guide in `.agents/skills/update-completions/SKILL.md` detailing dynamic data sources, cache probing, and token count patterns.
+
+### Changed
+- Updated description for `agy plugin validate` to match upstream CLI: `"Check a plugin's manifest and files"`.
+- Synced completions-kit upstream tooling with `gh` CLI API and automatic curl fallback.
 
 ## [1.3.5] - 2026-10-14
 
