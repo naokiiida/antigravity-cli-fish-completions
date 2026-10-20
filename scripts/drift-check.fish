@@ -82,7 +82,7 @@ end
 # Parse long flags from a help output.
 function __drift_parse_flags
     while read -l line
-        if string match -qr '^\s+-' -- $line
+        if string match -qr '^\s+-' -- $line; or string match -qr '\[--[a-zA-Z]' -- $line
             for flag in (string match -rga -- '--([a-zA-Z][-a-zA-Z0-9]*)' $line)
                 set -l clean (string replace -r '^--' '' -- $flag)
                 if test -n "$clean"
@@ -191,6 +191,7 @@ set -l flag_checks \
     install \
     "mcp add" \
     mic-serve \
+    "plugin validate" \
     "remote-control start"
 
 for subcmd in $flag_checks
