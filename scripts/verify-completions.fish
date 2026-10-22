@@ -24,7 +24,7 @@ set -g fish_complete_path "$repo_root/completions"
 
 echo "Verifying completion script: $completion_file"
 
-set -l total_tests 12
+set -l total_tests 13
 
 # Test 1: Syntax check
 echo "  [1/$total_tests] Running syntax check..."
@@ -74,7 +74,9 @@ end
 # Test 4: Check flag completions
 echo "  [4/$total_tests] Checking flag completions..."
 set -l flag_completions (complete -C "agy -" 2>/dev/null)
-for flag in continue conversation effort mode model output-format sandbox print dangerously-skip-permissions
+for flag in add-dir agent continue conversation dangerously-skip-permissions disable-slash-commands \
+    effort input-format json-schema log-file mode model new-project output-format print print-timeout \
+    project prompt prompt-interactive remote-control sandbox
     if not string match -q "*$flag*" -- $flag_completions
         echo "FAIL: Missing flag: --$flag"
         exit 1
@@ -124,12 +126,34 @@ for subcmd in start status stop
     end
 end
 
-# Test 8: Check install subcommand flag completions
-echo "  [8/$total_tests] Checking install subcommand flags..."
+# Test 8: Check subcommand flag completions
+echo "  [8/$total_tests] Checking subcommand flag completions..."
 set -l install_completions (complete -C "agy install -" 2>/dev/null)
 for flag in dir skip-aliases skip-path
     if not string match -q "*$flag*" -- $install_completions
         echo "FAIL: Missing install flag: --$flag"
+        exit 1
+    end
+end
+
+set -l mcp_add_flags (complete -C "agy mcp add -" 2>/dev/null)
+for flag in env header type
+    if not string match -q "*$flag*" -- $mcp_add_flags
+        echo "FAIL: Missing mcp add flag: --$flag"
+        exit 1
+    end
+end
+
+set -l mic_serve_flags (complete -C "agy mic-serve -" 2>/dev/null)
+if not string match -q "*addr*" -- $mic_serve_flags
+    echo "FAIL: Missing mic-serve flag: --addr"
+    exit 1
+end
+
+set -l rc_start_flags (complete -C "agy remote-control start -" 2>/dev/null)
+for flag in name session
+    if not string match -q "*$flag*" -- $rc_start_flags
+        echo "FAIL: Missing remote-control start flag: --$flag"
         exit 1
     end
 end
@@ -156,6 +180,30 @@ set -l timeout_completions (complete -C "agy --print-timeout " 2>/dev/null)
 for val in 30s 1m 5m 10m 1h
     if not string match -q "*$val*" -- $timeout_completions
         echo "FAIL: Missing print-timeout preset value: $val"
+        exit 1
+    end
+end
+
+set -l input_fmt_completions (complete -C "agy --input-format " 2>/dev/null)
+for val in text stream-json
+    if not string match -q "*$val*" -- $input_fmt_completions
+        echo "FAIL: Missing input-format value: $val"
+        exit 1
+    end
+end
+
+set -l output_fmt_completions (complete -C "agy --output-format " 2>/dev/null)
+for val in text json stream-json
+    if not string match -q "*$val*" -- $output_fmt_completions
+        echo "FAIL: Missing output-format value: $val"
+        exit 1
+    end
+end
+
+set -l mcp_type_completions (complete -C "agy mcp add --type " 2>/dev/null)
+for val in stdio http
+    if not string match -q "*$val*" -- $mcp_type_completions
+        echo "FAIL: Missing mcp add --type value: $val"
         exit 1
     end
 end
@@ -198,6 +246,18 @@ set -l plugin_link_comp (complete -C "agy plugin link " 2>/dev/null)
 if not string match -q "*antigravity-plugins-official*" -- $plugin_link_comp
     echo "FAIL: plugin link failed to complete marketplace name"
     exit 1
+end
+
+# Test 13: Model completion verification
+echo "  [13/$total_tests] Checking model options in __fish_agy_known_models..."
+set -l known_models (__fish_agy_known_models | string replace -r '\t.*' '')
+for model in gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
+    gemini-3.8-flash-high gemini-3.8-flash-medium gemini-3.8-flash-low \
+    claude-opus-5-5-high claude-sonnet-5-5-high gpt-oss-120b-medium
+    if not contains -- $model $known_models
+        echo "FAIL: Missing known model option: $model"
+        exit 1
+    end
 end
 
 echo ""
