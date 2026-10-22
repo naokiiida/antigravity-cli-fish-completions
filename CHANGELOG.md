@@ -4,6 +4,17 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-10-22
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.4.4.
+- Added dynamic model options drift check (Test 6) in `scripts/drift-check.fish` validating `agy models` against `__fish_agy_known_models`.
+- Added model completion test coverage (Test 13) in `scripts/verify-completions.fish`.
+- Expanded flag and value verification across `install`, `mcp add`, `mic-serve`, and `remote-control start` in `scripts/verify-completions.fish`.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.4.3 to 1.4.4.
+
 ## [1.4.3] - 2026-10-20
 
 ### Added
