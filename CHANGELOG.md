@@ -4,6 +4,17 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.5] - 2026-10-23
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.4.5.
+- Added short flag drift checks (`-c`, `-i`, `-p`) and subcommand short flag drift checks (`-H`, `-e`, `-t` on `mcp add`) in `scripts/drift-check.fish`.
+- Added alias wrapper verification (`complete -c antigravity -w agy`, Test 14) in `scripts/verify-completions.fish`.
+- Expanded test coverage in `scripts/verify-completions.fish` for top-level short flags (`-c`, `-i`, `-p`), `mcp add` short flags (`-H`, `-e`, `-t`), `plugin list` `--json` flag, and full model suite (13 models).
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.4.4 to 1.4.5.
+
 ## [1.4.4] - 2026-10-22
 
 ### Added
