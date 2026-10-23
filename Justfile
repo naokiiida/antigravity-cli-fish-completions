@@ -5,7 +5,7 @@ set shell := ["bash", "-uo", "pipefail", "-c"]
 
 default: test
 
-# Run offline static verification tests (12 tests)
+# Run offline static verification tests (14 tests)
 test:
     fish scripts/verify-completions.fish
 

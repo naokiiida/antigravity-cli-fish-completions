@@ -24,7 +24,7 @@ set -g fish_complete_path "$repo_root/completions"
 
 echo "Verifying completion script: $completion_file"
 
-set -l total_tests 13
+set -l total_tests 14
 
 # Test 1: Syntax check
 echo "  [1/$total_tests] Running syntax check..."
@@ -82,6 +82,12 @@ for flag in add-dir agent continue conversation dangerously-skip-permissions dis
         exit 1
     end
 end
+for short_flag in c i p
+    if not string match -rq "^-$short_flag\b" -- $flag_completions
+        echo "FAIL: Missing short flag: -$short_flag"
+        exit 1
+    end
+end
 
 # Test 5: Check plugin subcommand completions
 echo "  [5/$total_tests] Checking plugin subcommand completions..."
@@ -99,6 +105,12 @@ for flag in strict json
         echo "FAIL: Missing plugin validate flag: --$flag"
         exit 1
     end
+end
+
+set -l list_completions (complete -C "agy plugin list -" 2>/dev/null)
+if not string match -q "*json*" -- $list_completions
+    echo "FAIL: Missing plugin list flag: --json"
+    exit 1
 end
 
 # Test 6: Helper function existence
@@ -140,6 +152,12 @@ set -l mcp_add_flags (complete -C "agy mcp add -" 2>/dev/null)
 for flag in env header type
     if not string match -q "*$flag*" -- $mcp_add_flags
         echo "FAIL: Missing mcp add flag: --$flag"
+        exit 1
+    end
+end
+for short_flag in H e t
+    if not string match -rq "^-$short_flag\b" -- $mcp_add_flags
+        echo "FAIL: Missing mcp add short flag: -$short_flag"
         exit 1
     end
 end
@@ -253,11 +271,22 @@ echo "  [13/$total_tests] Checking model options in __fish_agy_known_models..."
 set -l known_models (__fish_agy_known_models | string replace -r '\t.*' '')
 for model in gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
     gemini-3.8-flash-high gemini-3.8-flash-medium gemini-3.8-flash-low \
-    claude-opus-5-5-high claude-sonnet-5-5-high gpt-oss-120b-medium
+    claude-opus-5-5-high claude-opus-5-5-medium claude-opus-5-5-low \
+    claude-sonnet-5-5-high claude-sonnet-5-5-medium claude-sonnet-5-5-low \
+    gpt-oss-120b-medium
     if not contains -- $model $known_models
         echo "FAIL: Missing known model option: $model"
         exit 1
     end
+end
+
+# Test 14: Alias completion propagation (antigravity wraps agy)
+echo "  [14/$total_tests] Checking alias completion wrapper (antigravity -> agy)..."
+set -l agy_subcmds (complete -C "agy " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+set -l alias_subcmds (complete -C "antigravity " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+if test (count $alias_subcmds) -lt 5; or test "$agy_subcmds" != "$alias_subcmds"
+    echo "FAIL: Alias completion (antigravity) does not match agy completions"
+    exit 1
 end
 
 echo ""

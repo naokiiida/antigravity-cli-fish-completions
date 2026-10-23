@@ -136,15 +136,28 @@ echo "Drift check: top-level flags"
 set -l help_flags (agy --help 2>&1 | __drift_parse_flags)
 set -l comp_flags (__drift_completion_words "agy -" | string match -rg '^--(.*)')
 
+set -l flag_drift 0
 for flag in $help_flags
     if not contains -- $flag $comp_flags
         echo "  MISSING in completions: --$flag"
-        set drift 1
+        set flag_drift 1
     end
 end
 
-if test $drift -eq 0
+# Check short flags
+set -l help_short (agy --help 2>&1 | string match -rg '^\s+-([a-zA-Z])\b' | sort -u)
+set -l comp_short (__drift_completion_words "agy -" | string match -rg '^-([a-zA-Z])$' | sort -u)
+for sflag in $help_short
+    if not contains -- $sflag $comp_short
+        echo "  MISSING short flag in completions: -$sflag"
+        set flag_drift 1
+    end
+end
+
+if test $flag_drift -eq 0
     echo "  OK"
+else
+    set drift (math "$drift + $flag_drift")
 end
 
 # --- Test 3: Subcommand trees ------------------------------------------------
@@ -218,6 +231,18 @@ for subcmd in $flag_checks
             test "$flag" = help; and continue
             echo "  EXTRA/LEAKED in completions: agy $subcmd --$flag"
             set test_drift 1
+        end
+    end
+
+    # Check short flags if present in help
+    set -l sub_help_short (agy $subcmd_parts --help 2>&1 | string match -rg '^\s+-([a-zA-Z])\b' | sort -u)
+    if test (count $sub_help_short) -gt 0
+        set -l sub_comp_short (__drift_completion_words "agy $subcmd -" | string match -rg '^-([a-zA-Z])$' | sort -u)
+        for sflag in $sub_help_short
+            if not contains -- $sflag $sub_comp_short
+                echo "  MISSING short flag in completions: agy $subcmd -$sflag"
+                set test_drift 1
+            end
         end
     end
 
