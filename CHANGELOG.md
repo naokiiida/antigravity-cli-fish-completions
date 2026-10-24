@@ -4,6 +4,16 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.6] - 2026-10-24
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.4.6.
+- Expanded static test coverage in `scripts/verify-completions.fish` for `-h`/`--help` flags and `-h` short flags across `plugin validate`, `install`, `mcp add`, `mic-serve`, and `remote-control start`.
+
+### Changed
+- Aligned `agy plugin validate` `--strict` and `--json` descriptions in `completions/agy.fish` with official 1.4.6 `--help` output.
+- Bumped tracked CLI version in `agy-version` from 1.4.5 to 1.4.6.
+
 ## [1.4.5] - 2026-10-23
 
 ### Added
