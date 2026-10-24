@@ -100,11 +100,15 @@ for subcmd in list import install uninstall enable disable validate link
 end
 
 set -l validate_completions (complete -C "agy plugin validate -" 2>/dev/null)
-for flag in strict json
+for flag in strict json help
     if not string match -q "*$flag*" -- $validate_completions
         echo "FAIL: Missing plugin validate flag: --$flag"
         exit 1
     end
+end
+if not string match -rq '^-h\b' -- $validate_completions
+    echo "FAIL: Missing plugin validate short flag: -h"
+    exit 1
 end
 
 set -l list_completions (complete -C "agy plugin list -" 2>/dev/null)
@@ -141,21 +145,25 @@ end
 # Test 8: Check subcommand flag completions
 echo "  [8/$total_tests] Checking subcommand flag completions..."
 set -l install_completions (complete -C "agy install -" 2>/dev/null)
-for flag in dir skip-aliases skip-path
+for flag in dir skip-aliases skip-path help
     if not string match -q "*$flag*" -- $install_completions
         echo "FAIL: Missing install flag: --$flag"
         exit 1
     end
 end
+if not string match -rq '^-h\b' -- $install_completions
+    echo "FAIL: Missing install short flag: -h"
+    exit 1
+end
 
 set -l mcp_add_flags (complete -C "agy mcp add -" 2>/dev/null)
-for flag in env header type
+for flag in env header type help
     if not string match -q "*$flag*" -- $mcp_add_flags
         echo "FAIL: Missing mcp add flag: --$flag"
         exit 1
     end
 end
-for short_flag in H e t
+for short_flag in H e t h
     if not string match -rq "^-$short_flag\b" -- $mcp_add_flags
         echo "FAIL: Missing mcp add short flag: -$short_flag"
         exit 1
@@ -163,17 +171,27 @@ for short_flag in H e t
 end
 
 set -l mic_serve_flags (complete -C "agy mic-serve -" 2>/dev/null)
-if not string match -q "*addr*" -- $mic_serve_flags
-    echo "FAIL: Missing mic-serve flag: --addr"
+for flag in addr help
+    if not string match -q "*$flag*" -- $mic_serve_flags
+        echo "FAIL: Missing mic-serve flag: --$flag"
+        exit 1
+    end
+end
+if not string match -rq '^-h\b' -- $mic_serve_flags
+    echo "FAIL: Missing mic-serve short flag: -h"
     exit 1
 end
 
 set -l rc_start_flags (complete -C "agy remote-control start -" 2>/dev/null)
-for flag in name session
+for flag in name session help
     if not string match -q "*$flag*" -- $rc_start_flags
         echo "FAIL: Missing remote-control start flag: --$flag"
         exit 1
     end
+end
+if not string match -rq '^-h\b' -- $rc_start_flags
+    echo "FAIL: Missing remote-control start short flag: -h"
+    exit 1
 end
 
 # Test 9: Flag value completions (enumerated flags)
