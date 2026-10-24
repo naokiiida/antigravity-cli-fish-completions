@@ -479,8 +479,8 @@ complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from disable" -xa "(__fish_agy_enabled_plugins)"
 
 # plugin validate
-complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -l strict -d "Fail on warnings"
-complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -l json -d "Output validation report as JSON"
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -l strict -d "Also fail on warnings"
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -l json -d "Print the report as JSON"
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -rF
 
 # plugin link
