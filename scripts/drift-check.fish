@@ -201,9 +201,12 @@ end
 # --- Test 4: Subcommand flags ------------------------------------------------
 
 set -l flag_checks \
+    agent \
+    changelog \
     install \
     "mcp add" \
     mic-serve \
+    models \
     "plugin validate" \
     "remote-control start"
 

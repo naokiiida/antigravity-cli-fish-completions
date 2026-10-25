@@ -194,6 +194,18 @@ if not string match -rq '^-h\b' -- $rc_start_flags
     exit 1
 end
 
+for simple_subcmd in agent changelog models
+    set -l simple_flags (complete -C "agy $simple_subcmd -" 2>/dev/null)
+    if not string match -q "*help*" -- $simple_flags
+        echo "FAIL: Missing $simple_subcmd flag: --help"
+        exit 1
+    end
+    if not string match -rq '^-h\b' -- $simple_flags
+        echo "FAIL: Missing $simple_subcmd short flag: -h"
+        exit 1
+    end
+end
+
 # Test 9: Flag value completions (enumerated flags)
 echo "  [9/$total_tests] Checking flag value completions..."
 set -l effort_completions (complete -C "agy --effort " 2>/dev/null)
@@ -264,7 +276,7 @@ for leaked in continue conversation effort mode model print sandbox
     end
 end
 
-# Test 12: Check positional completions (mcp add, plugin install, plugin link)
+# Test 12: Check positional completions (mcp add, plugin install, plugin link, help)
 echo "  [12/$total_tests] Checking positional completions..."
 set -l mcp_add_cmd (complete -C "agy mcp add test-server " 2>/dev/null)
 if test (count $mcp_add_cmd) -lt 5
@@ -282,6 +294,14 @@ set -l plugin_link_comp (complete -C "agy plugin link " 2>/dev/null)
 if not string match -q "*antigravity-plugins-official*" -- $plugin_link_comp
     echo "FAIL: plugin link failed to complete marketplace name"
     exit 1
+end
+
+set -l help_subcmd_comp (complete -C "agy help " 2>/dev/null)
+for subcmd in agent changelog install mcp mic-serve models plugin remote-control update
+    if not string match -q "*$subcmd*" -- $help_subcmd_comp
+        echo "FAIL: agy help failed to complete subcommand: $subcmd"
+        exit 1
+    end
 end
 
 # Test 13: Model completion verification
