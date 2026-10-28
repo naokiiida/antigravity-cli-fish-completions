@@ -205,10 +205,16 @@ set -l flag_checks \
     changelog \
     install \
     "mcp add" \
+    "mcp disable" \
+    "mcp enable" \
+    "mcp list" \
+    "mcp remove" \
     mic-serve \
     models \
     "plugin validate" \
-    "remote-control start"
+    "remote-control start" \
+    "remote-control status" \
+    "remote-control stop"
 
 for subcmd in $flag_checks
     echo "Drift check: $subcmd flags"

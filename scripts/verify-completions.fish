@@ -194,7 +194,7 @@ if not string match -rq '^-h\b' -- $rc_start_flags
     exit 1
 end
 
-for simple_subcmd in agent changelog models
+for simple_subcmd in agent changelog models update
     set -l simple_flags (complete -C "agy $simple_subcmd -" 2>/dev/null)
     if not string match -q "*help*" -- $simple_flags
         echo "FAIL: Missing $simple_subcmd flag: --help"
@@ -202,6 +202,30 @@ for simple_subcmd in agent changelog models
     end
     if not string match -rq '^-h\b' -- $simple_flags
         echo "FAIL: Missing $simple_subcmd short flag: -h"
+        exit 1
+    end
+end
+
+for mcp_subcmd in remove list enable disable
+    set -l mcp_sub_flags (complete -C "agy mcp $mcp_subcmd -" 2>/dev/null)
+    if not string match -q "*help*" -- $mcp_sub_flags
+        echo "FAIL: Missing mcp $mcp_subcmd flag: --help"
+        exit 1
+    end
+    if not string match -rq '^-h\b' -- $mcp_sub_flags
+        echo "FAIL: Missing mcp $mcp_subcmd short flag: -h"
+        exit 1
+    end
+end
+
+for rc_subcmd in status stop
+    set -l rc_sub_flags (complete -C "agy remote-control $rc_subcmd -" 2>/dev/null)
+    if not string match -q "*help*" -- $rc_sub_flags
+        echo "FAIL: Missing remote-control $rc_subcmd flag: --help"
+        exit 1
+    end
+    if not string match -rq '^-h\b' -- $rc_sub_flags
+        echo "FAIL: Missing remote-control $rc_subcmd short flag: -h"
         exit 1
     end
 end
