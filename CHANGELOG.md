@@ -4,6 +4,16 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.8] - 2026-10-28
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.4.8.
+- Expanded flag drift checks in `scripts/drift-check.fish` for `mcp` subcommands (`disable`, `enable`, `list`, `remove`) and `remote-control` subcommands (`status`, `stop`).
+- Expanded static verification in `scripts/verify-completions.fish` for flags (`-h`, `--help`) across `update`, `mcp` subcommands (`disable`, `enable`, `list`, `remove`), and `remote-control` subcommands (`status`, `stop`).
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.4.7 to 1.4.8.
+
 ## [1.4.7] - 2026-10-25
 
 ### Added
