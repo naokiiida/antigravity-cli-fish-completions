@@ -194,7 +194,7 @@ if not string match -rq '^-h\b' -- $rc_start_flags
     exit 1
 end
 
-for simple_subcmd in agent changelog models update
+for simple_subcmd in agent agents changelog models update
     set -l simple_flags (complete -C "agy $simple_subcmd -" 2>/dev/null)
     if not string match -q "*help*" -- $simple_flags
         echo "FAIL: Missing $simple_subcmd flag: --help"
@@ -343,11 +343,18 @@ for model in gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
 end
 
 # Test 14: Alias completion propagation (antigravity wraps agy)
-echo "  [14/$total_tests] Checking alias completion wrapper (antigravity -> agy)..."
+echo "  [14/$total_tests] Checking alias completion wrapper (antigravity -> agy and plugins -> plugin)..."
 set -l agy_subcmds (complete -C "agy " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
 set -l alias_subcmds (complete -C "antigravity " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
 if test (count $alias_subcmds) -lt 5; or test "$agy_subcmds" != "$alias_subcmds"
     echo "FAIL: Alias completion (antigravity) does not match agy completions"
+    exit 1
+end
+
+set -l plugin_subcmds (complete -C "agy plugin " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+set -l plugins_alias_subcmds (complete -C "agy plugins " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+if test (count $plugins_alias_subcmds) -lt 5; or test "$plugin_subcmds" != "$plugins_alias_subcmds"
+    echo "FAIL: Alias completion (agy plugins) does not match agy plugin completions"
     exit 1
 end
 

@@ -214,7 +214,8 @@ set -l flag_checks \
     "plugin validate" \
     "remote-control start" \
     "remote-control status" \
-    "remote-control stop"
+    "remote-control stop" \
+    update
 
 for subcmd in $flag_checks
     echo "Drift check: $subcmd flags"
