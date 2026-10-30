@@ -4,6 +4,17 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.10] - 2026-10-30
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.4.10.
+- Added `--settings` flag completion in `completions/agy.fish` for session-scoped configuration (JSON object or file path).
+- Expanded static verification in `scripts/verify-completions.fish` to validate `--settings` presence and verify subcommand flag isolation.
+- Expanded dynamic drift check coverage in `scripts/drift-check.fish` for `plugins` alias subcommand tree, `agents` flags, and `plugins validate` flags.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.4.9 to 1.4.10.
+
 ## [1.4.9] - 2026-10-29
 
 ### Added
