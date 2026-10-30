@@ -162,7 +162,7 @@ end
 
 # --- Test 3: Subcommand trees ------------------------------------------------
 
-set -l subcmd_checks mcp plugin remote-control
+set -l subcmd_checks mcp plugin plugins remote-control
 
 for subcmd in $subcmd_checks
     echo "Drift check: $subcmd subcommands"
@@ -202,6 +202,7 @@ end
 
 set -l flag_checks \
     agent \
+    agents \
     changelog \
     install \
     "mcp add" \
@@ -212,6 +213,7 @@ set -l flag_checks \
     mic-serve \
     models \
     "plugin validate" \
+    "plugins validate" \
     "remote-control start" \
     "remote-control status" \
     "remote-control stop" \

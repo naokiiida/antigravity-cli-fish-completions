@@ -76,7 +76,7 @@ echo "  [4/$total_tests] Checking flag completions..."
 set -l flag_completions (complete -C "agy -" 2>/dev/null)
 for flag in add-dir agent continue conversation dangerously-skip-permissions disable-slash-commands \
     effort input-format json-schema log-file mode model new-project output-format print print-timeout \
-    project prompt prompt-interactive remote-control sandbox
+    project prompt prompt-interactive remote-control sandbox settings
     if not string match -q "*$flag*" -- $flag_completions
         echo "FAIL: Missing flag: --$flag"
         exit 1
@@ -293,7 +293,7 @@ end
 # Test 11: Top-level flags do not leak into subcommands (regression guard)
 echo "  [11/$total_tests] Checking subcommand flag isolation..."
 set -l rc_start_flags (complete -C "agy remote-control start --" 2>/dev/null)
-for leaked in continue conversation effort mode model print sandbox
+for leaked in continue conversation effort mode model print sandbox settings
     if string match -q "*--$leaked*" -- $rc_start_flags
         echo "FAIL: Leaked top-level flag into subcommand: --$leaked"
         exit 1
