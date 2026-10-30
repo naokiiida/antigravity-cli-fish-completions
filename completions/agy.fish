@@ -395,6 +395,7 @@ complete -c agy -n __fish_use_subcommand -l print-timeout -d "Optional time limi
 complete -c agy -n __fish_use_subcommand -l project -d "Project ID or project name for the current CLI session" -rx
 complete -c agy -n __fish_use_subcommand -l json-schema -d "Optional JSON schema string or path to schema file" -rF
 complete -c agy -n __fish_use_subcommand -l log-file -d "Override CLI log file path" -rF
+complete -c agy -n __fish_use_subcommand -l settings -d "Settings for this session only, never saved: a JSON object of settings.json keys, inline or as a file path" -rF
 
 # =============================================================================
 # install subcommand
