@@ -4,6 +4,16 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.4.12] - 2026-10-31
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.4.11 and v1.4.12.
+- Expanded static verification in `scripts/verify-completions.fish` to validate `plugin` / `plugins` import sources (`gemini`, `claude`), `plugins validate` flags, `plugins list` flags, and `antigravity -> agy` flag completion propagation.
+- Expanded dynamic drift check coverage in `scripts/drift-check.fish` with a dedicated alias wrapper and parity test (Test 7) verifying zero drift between canonical and alias commands (`agy` vs `antigravity`, `plugin` vs `plugins`).
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.4.10 to 1.4.12.
+
 ## [1.4.10] - 2026-10-30
 
 ### Added
