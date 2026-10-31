@@ -117,6 +117,34 @@ if not string match -q "*json*" -- $list_completions
     exit 1
 end
 
+set -l plugins_validate_completions (complete -C "agy plugins validate -" 2>/dev/null)
+for flag in strict json help
+    if not string match -q "*$flag*" -- $plugins_validate_completions
+        echo "FAIL: Missing plugins validate flag: --$flag"
+        exit 1
+    end
+end
+if not string match -rq '^-h\b' -- $plugins_validate_completions
+    echo "FAIL: Missing plugins validate short flag: -h"
+    exit 1
+end
+
+set -l plugins_list_completions (complete -C "agy plugins list -" 2>/dev/null)
+if not string match -q "*json*" -- $plugins_list_completions
+    echo "FAIL: Missing plugins list flag: --json"
+    exit 1
+end
+
+for cmd_prefix in "agy plugin" "agy plugins"
+    set -l import_completions (complete -C "$cmd_prefix import " 2>/dev/null)
+    for source in gemini claude
+        if not string match -q "*$source*" -- $import_completions
+            echo "FAIL: Missing $cmd_prefix import source: $source"
+            exit 1
+        end
+    end
+end
+
 # Test 6: Helper function existence
 echo "  [6/$total_tests] Checking helper functions..."
 for fn in __fish_agy_conversations __fish_agy_agents __fish_agy_mcp_servers \
@@ -348,6 +376,13 @@ set -l agy_subcmds (complete -C "agy " 2>/dev/null | string replace -r '\t.*' ''
 set -l alias_subcmds (complete -C "antigravity " 2>/dev/null | string replace -r '\t.*' '' | sort -u)
 if test (count $alias_subcmds) -lt 5; or test "$agy_subcmds" != "$alias_subcmds"
     echo "FAIL: Alias completion (antigravity) does not match agy completions"
+    exit 1
+end
+
+set -l agy_flags (complete -C "agy -" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+set -l alias_flags (complete -C "antigravity -" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+if test (count $alias_flags) -lt 10; or test "$agy_flags" != "$alias_flags"
+    echo "FAIL: Alias flag completion (antigravity) does not match agy flag completions"
     exit 1
 end
 

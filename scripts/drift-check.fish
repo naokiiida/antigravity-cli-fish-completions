@@ -306,6 +306,39 @@ else
     echo "  SKIPPED (agy models returned no output)"
 end
 
+# --- Test 7: Alias wrapper and parity drift check ---------------------------
+
+echo "Drift check: alias wrapper and parity"
+
+set -l agy_root_cmds (__drift_completion_words "agy " | sort -u)
+set -l antigravity_root_cmds (__drift_completion_words "antigravity " | sort -u)
+set -l alias_drift 0
+
+if test "$agy_root_cmds" != "$antigravity_root_cmds"
+    echo "  MISSING or mismatched subcommands in antigravity alias wrapper"
+    set alias_drift 1
+end
+
+set -l agy_root_flags (__drift_completion_words "agy -" | sort -u)
+set -l antigravity_root_flags (__drift_completion_words "antigravity -" | sort -u)
+if test "$agy_root_flags" != "$antigravity_root_flags"
+    echo "  MISSING or mismatched flags in antigravity alias wrapper"
+    set alias_drift 1
+end
+
+set -l plugin_cmds (__drift_completion_words "agy plugin " | sort -u)
+set -l plugins_cmds (__drift_completion_words "agy plugins " | sort -u)
+if test "$plugin_cmds" != "$plugins_cmds"
+    echo "  MISSING or mismatched subcommands between agy plugin and agy plugins"
+    set alias_drift 1
+end
+
+if test $alias_drift -eq 0
+    echo "  OK"
+else
+    set drift (math "$drift + $alias_drift")
+end
+
 # --- Summary ------------------------------------------------------------------
 
 echo ""
