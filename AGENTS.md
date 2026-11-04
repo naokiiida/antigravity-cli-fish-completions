@@ -65,11 +65,10 @@ just all
 ## Skills Management & Upstream Sync
 
 - Skills from `completions-kit` are managed via the `skills` CLI.
-- **Upstream location**: `/Users/naokiiida/Documents/1_personal/0_skills/completions-kit`
-- When modifying skills in `completions-kit`, **always edit upstream first** at `/Users/naokiiida/Documents/1_personal/0_skills/completions-kit`.
+- When modifying skills in `completions-kit`, **always edit upstream first** by checking source via `skills ls`
 - Then sync/apply the changes into this repository using:
   ```bash
-  skills add ../../1_personal/0_skills/completions-kit -y
+  skills add <source> -y
   ```
 
 ## Development Practices
