@@ -22,7 +22,7 @@ The completion file has these sections (in order):
 2. Helper functions (`__fish_agy_*` for conversations, agents, MCP servers, plugins, cache discovery, and marketplaces)
 3. Subcommand registrations via `__fish_use_subcommand`
 4. Top-level flag definitions
-5. Per-subcommand sections (`install`, `mcp`, `mic-serve`, `plugin`, `remote-control`, `help`)
+5. Per-subcommand sections (`acp`, `install`, `mcp`, `mic-serve`, `plugin`, `remote-control`, `help`)
 
 ### Dynamic Completions
 

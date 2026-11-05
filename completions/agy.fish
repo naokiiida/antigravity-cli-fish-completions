@@ -332,6 +332,7 @@ end
 # Canonical subcommands only (aliases like `agents` and `plugins` are hidden)
 # =============================================================================
 
+complete -c agy -n __fish_use_subcommand -xa acp -d "Start the Agent Client Protocol (ACP) stdio server"
 complete -c agy -n __fish_use_subcommand -xa agent -d "List available agents"
 complete -c agy -n __fish_use_subcommand -xa changelog -d "Show changelog and release notes"
 complete -c agy -n __fish_use_subcommand -xa help -d "Show help for subcommands"
@@ -354,6 +355,7 @@ complete -c agy -n __fish_use_subcommand -l disable-slash-commands -d "Disable s
 complete -c agy -n __fish_use_subcommand -l new-project -d "Create a new project for this session"
 complete -c agy -n __fish_use_subcommand -s p -l print -d "Run a single prompt non-interactively and print the response"
 complete -c agy -n __fish_use_subcommand -l prompt -d "Alias for --print"
+complete -c agy -n __fish_use_subcommand -l remote-agent -d "Run this session's conversations using remote agents"
 complete -c agy -n __fish_use_subcommand -l remote-control -d "Create a remote connection for the CLI session on start up"
 complete -c agy -n __fish_use_subcommand -l sandbox -d "Run in a sandbox with terminal restrictions enabled"
 complete -c agy -n __fish_use_subcommand -l version -d "Output the version number"
@@ -396,6 +398,37 @@ complete -c agy -n __fish_use_subcommand -l project -d "Project ID or project na
 complete -c agy -n __fish_use_subcommand -l json-schema -d "Optional JSON schema string or path to schema file" -rF
 complete -c agy -n __fish_use_subcommand -l log-file -d "Override CLI log file path" -rF
 complete -c agy -n __fish_use_subcommand -l settings -d "Settings for this session only, never saved: a JSON object of settings.json keys, inline or as a file path" -rF
+
+# =============================================================================
+# acp subcommand
+# =============================================================================
+
+complete -c agy -n "__fish_seen_subcommand_from acp" -l add-dir -d "Add a directory to the workspace (repeatable)" -rxa "(__fish_complete_directories)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l agent -d "Agent for the ACP session" -rxa "(__fish_agy_agents)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l app-data-dir -d "Path where application data is stored" -rxa "(__fish_complete_directories)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l app_data_dir -d "Path where application data is stored" -rxa "(__fish_complete_directories)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l cli_dir_name -d "Subdirectory under app_data_dir for CLI settings and logs" -rx
+complete -c agy -n "__fish_seen_subcommand_from acp" -l cli_log_file -d "Override ACP log file path" -rF
+complete -c agy -n "__fish_seen_subcommand_from acp" -l cloud_code_endpoint -d "CCPA API URL" -rx
+complete -c agy -n "__fish_seen_subcommand_from acp" -l dangerously-skip-permissions -d "Auto-approve all tool permission requests"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l disable-telemetry -d "If true, disable telemetry"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l disable_telemetry -d "If true, disable telemetry"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l gemini-dir -d "Path where Gemini files are stored" -rxa "(__fish_complete_directories)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l gemini_dir -d "Path where Gemini files are stored" -rxa "(__fish_complete_directories)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -s h -l help -d "Show help"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l ide-mcp-port -d "Port for host IDE tools MCP server (requires 'nc' in \$PATH)" -rx
+complete -c agy -n "__fish_seen_subcommand_from acp" -l ide_mcp_port -d "Port for host IDE tools MCP server (requires 'nc' in \$PATH)" -rx
+complete -c agy -n "__fish_seen_subcommand_from acp" -l include-default-customizations -d "Include default customizations"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l is_google3_workspace -d "Whether running in Google environment"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l is_google_internal -d "Deprecated: use is_google3_workspace"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l log-file -d "Override ACP log file path" -rF
+complete -c agy -n "__fish_seen_subcommand_from acp" -l login -d "Log in with Google interactively, then exit (ACP terminal auth)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l override_user_agent_name -d "Override user agent name for HTTP requests" -rx
+complete -c agy -n "__fish_seen_subcommand_from acp" -l process-per-session -d "Serve each session from an isolated worker process"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l sandbox -d "Run in a sandbox with terminal restrictions enabled"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l stdio -d "Use stdio JSON-RPC transport (default)"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l use_stubby_auth -d "Use LOAS auth"
+complete -c agy -n "__fish_seen_subcommand_from acp" -l worker -d "Serve a single session for an ACP front process (internal)"
 
 # =============================================================================
 # install subcommand
@@ -509,7 +542,7 @@ complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_
 # help subcommand
 # =============================================================================
 
-complete -c agy -n "__fish_seen_subcommand_from help" -xa "agent changelog install mcp mic-serve models plugin remote-control update" -d Subcommand
+complete -c agy -n "__fish_seen_subcommand_from help" -xa "acp agent changelog install mcp mic-serve models plugin remote-control update" -d Subcommand
 
 # =============================================================================
 # Simple subcommands (help only)

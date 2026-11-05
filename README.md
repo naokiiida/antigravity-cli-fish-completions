@@ -76,6 +76,7 @@ fisher update .
 | `plugin` / `plugins` | Full command tree (`list`, `import`, `install`, `uninstall`, `enable`, `disable`, `validate`, `link`) + dynamic plugin completion |
 | `remote-control` | `start`, `status`, `stop` with all flags (`--name`, `--session`) |
 | `install` | Shell and PATH configuration flags (`--dir`, `--skip-aliases`, `--skip-path`) |
+| `acp` | Agent Client Protocol (ACP) stdio server flags |
 | `mic-serve` | Remote microphone serving (`--addr`) |
 | `models`, `agent`/`agents` | Model and agent listing commands + flag completion |
 | `help`, `changelog`, `update` | Subcommand completions |
