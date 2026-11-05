@@ -83,7 +83,7 @@ end
 function __drift_parse_flags
     while read -l line
         if string match -qr '^\s+-' -- $line; or string match -qr '\[--[a-zA-Z]' -- $line
-            for flag in (string match -rga -- '--([a-zA-Z][-a-zA-Z0-9]*)' $line)
+            for flag in (string match -rga -- '--([a-zA-Z][-_a-zA-Z0-9]*)' $line)
                 set -l clean (string replace -r '^--' '' -- $flag)
                 if test -n "$clean"
                     echo $clean
@@ -201,6 +201,7 @@ end
 # --- Test 4: Subcommand flags ------------------------------------------------
 
 set -l flag_checks \
+    acp \
     agent \
     agents \
     changelog \

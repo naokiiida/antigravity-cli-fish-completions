@@ -44,7 +44,7 @@ if test (count $completions) -lt 5
 end
 
 set -l completion_tokens (string replace -r '\t.*' '' -- $completions)
-set -l required_subcommands agent changelog help install mcp mic-serve models plugin remote-control update
+set -l required_subcommands acp agent changelog help install mcp mic-serve models plugin remote-control update
 for cmd in $required_subcommands
     if not contains -- $cmd $completion_tokens
         echo "FAIL: Missing subcommand: $cmd"
@@ -76,7 +76,7 @@ echo "  [4/$total_tests] Checking flag completions..."
 set -l flag_completions (complete -C "agy -" 2>/dev/null)
 for flag in add-dir agent continue conversation dangerously-skip-permissions disable-slash-commands \
     effort input-format json-schema log-file mode model new-project output-format print print-timeout \
-    project prompt prompt-interactive remote-control sandbox settings
+    project prompt prompt-interactive remote-agent remote-control sandbox settings
     if not string match -q "*$flag*" -- $flag_completions
         echo "FAIL: Missing flag: --$flag"
         exit 1
@@ -172,6 +172,21 @@ end
 
 # Test 8: Check subcommand flag completions
 echo "  [8/$total_tests] Checking subcommand flag completions..."
+set -l acp_flags (complete -C "agy acp -" 2>/dev/null)
+for flag in add-dir agent app-data-dir app_data_dir cli_dir_name cli_log_file cloud_code_endpoint \
+    dangerously-skip-permissions disable-telemetry disable_telemetry gemini-dir gemini_dir help \
+    ide-mcp-port ide_mcp_port include-default-customizations is_google3_workspace is_google_internal \
+    log-file login override_user_agent_name process-per-session sandbox stdio use_stubby_auth worker
+    if not string match -q "*$flag*" -- $acp_flags
+        echo "FAIL: Missing acp flag: --$flag"
+        exit 1
+    end
+end
+if not string match -rq '^-h\b' -- $acp_flags
+    echo "FAIL: Missing acp short flag: -h"
+    exit 1
+end
+
 set -l install_completions (complete -C "agy install -" 2>/dev/null)
 for flag in dir skip-aliases skip-path help
     if not string match -q "*$flag*" -- $install_completions
@@ -321,7 +336,7 @@ end
 # Test 11: Top-level flags do not leak into subcommands (regression guard)
 echo "  [11/$total_tests] Checking subcommand flag isolation..."
 set -l rc_start_flags (complete -C "agy remote-control start --" 2>/dev/null)
-for leaked in continue conversation effort mode model print sandbox settings
+for leaked in continue conversation effort mode model print remote-agent sandbox settings
     if string match -q "*--$leaked*" -- $rc_start_flags
         echo "FAIL: Leaked top-level flag into subcommand: --$leaked"
         exit 1
@@ -349,7 +364,7 @@ if not string match -q "*antigravity-plugins-official*" -- $plugin_link_comp
 end
 
 set -l help_subcmd_comp (complete -C "agy help " 2>/dev/null)
-for subcmd in agent changelog install mcp mic-serve models plugin remote-control update
+for subcmd in acp agent changelog install mcp mic-serve models plugin remote-control update
     if not string match -q "*$subcmd*" -- $help_subcmd_comp
         echo "FAIL: agy help failed to complete subcommand: $subcmd"
         exit 1
