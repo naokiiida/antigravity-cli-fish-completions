@@ -357,10 +357,24 @@ if test (count $plugin_install_comp) -lt 1
     exit 1
 end
 
+# Check plugin link marketplace completion if marketplaces are available, or test helper directly with mock
 set -l plugin_link_comp (complete -C "agy plugin link " 2>/dev/null)
-if not string match -q "*antigravity-plugins-official*" -- $plugin_link_comp
-    echo "FAIL: plugin link failed to complete marketplace name"
-    exit 1
+if test (count $plugin_link_comp) -gt 0
+    if not string match -q "*antigravity-plugins-official*" -- $plugin_link_comp
+        echo "FAIL: plugin link failed to complete marketplace name"
+        exit 1
+    end
+else
+    # In isolated CI environments without pre-cached marketplaces, verify with a temporary mock cache
+    set -l mock_cache (mktemp -d)
+    mkdir -p "$mock_cache/cache/marketplaces/antigravity-plugins-official"
+    set -lx ANTIGRAVITY_APP_DATA_DIR "$mock_cache"
+    set -l mock_comp (complete -C "agy plugin link " 2>/dev/null)
+    rm -rf "$mock_cache"
+    if not string match -q "*antigravity-plugins-official*" -- $mock_comp
+        echo "FAIL: plugin link failed to complete marketplace name (mock test failed)"
+        exit 1
+    end
 end
 
 set -l help_subcmd_comp (complete -C "agy help " 2>/dev/null)

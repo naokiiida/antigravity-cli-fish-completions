@@ -86,7 +86,10 @@ function __fish_agy_agents
     end
 
     # Source 2: agy agents CLI output
-    set -l cli_agents (command agy agents 2>/dev/null | string match -rv '^Available agents:|^\\s*$' | string trim)
+    set -l cli_agents
+    if command -q agy
+        set cli_agents (command agy agents 2>/dev/null | string match -rv '^Available agents:|^\\s*$' | string trim)
+    end
     for a in $cli_agents
         echo $a
     end
@@ -105,27 +108,32 @@ function __fish_agy_mcp_servers
     end
 
     # Source 2: agy mcp list output
-    set -l list_output (command agy mcp list 2>/dev/null)
-    if test -n "$list_output"
-        set -a servers (printf '%s\n' $list_output | string match -rg '^(\S+)\s+(?:stdio|http)\s+(?:enabled|disabled)')
+    if command -q agy
+        set -l list_output (command agy mcp list 2>/dev/null)
+        if test -n "$list_output"
+            set -a servers (printf '%s\n' $list_output | string match -rg '^(\S+)\s+(?:stdio|http)\s+(?:enabled|disabled)')
+        end
     end
 
     printf '%s\n' $servers | sort -u
 end
 
 function __fish_agy_mcp_enabled_servers
+    command -q agy; or return
     set -l list_output (command agy mcp list 2>/dev/null)
     test -n "$list_output"; or return
     printf '%s\n' $list_output | string match -rg '^(\S+)\s+(?:stdio|http)\s+enabled'
 end
 
 function __fish_agy_mcp_disabled_servers
+    command -q agy; or return
     set -l list_output (command agy mcp list 2>/dev/null)
     test -n "$list_output"; or return
     printf '%s\n' $list_output | string match -rg '^(\S+)\s+(?:stdio|http)\s+disabled'
 end
 
 function __fish_agy_installed_plugins
+    command -q agy; or return
     set -l json (command agy plugin list --json 2>/dev/null | string join ' ')
     test -n "$json"; or return
     set -l json (string replace -ra '\}\s*,\s*\{' '}\n{' -- $json)
@@ -138,6 +146,7 @@ function __fish_agy_installed_plugins
 end
 
 function __fish_agy_enabled_plugins
+    command -q agy; or return
     set -l json (command agy plugin list --json 2>/dev/null | string join ' ')
     test -n "$json"; or return
     set -l json (string replace -ra '\}\s*,\s*\{' '}\n{' -- $json)
@@ -151,6 +160,7 @@ function __fish_agy_enabled_plugins
 end
 
 function __fish_agy_disabled_plugins
+    command -q agy; or return
     set -l json (command agy plugin list --json 2>/dev/null | string join ' ')
     test -n "$json"; or return
     set -l json (string replace -ra '\}\s*,\s*\{' '}\n{' -- $json)

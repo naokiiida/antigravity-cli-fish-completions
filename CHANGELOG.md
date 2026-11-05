@@ -4,6 +4,16 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-11-06
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.1.
+- Ensured external CLI guards (`command -q agy`) across helper functions in `completions/agy.fish` to prevent subshell errors when `agy` is not installed or during minimal CI runs.
+- Enhanced positional test isolation in `scripts/verify-completions.fish` with dynamic mock cache generation for headless environments lacking pre-cached marketplace catalogs.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.5.0 to 1.5.1.
+
 ## [1.5.0] - 2026-11-05
 
 ### Added
