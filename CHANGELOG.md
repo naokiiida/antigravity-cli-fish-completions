@@ -4,6 +4,19 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-05
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.0.
+- Added `acp` subcommand completions and flags in `completions/agy.fish` for Agent Client Protocol server mode.
+- Added `--remote-agent` top-level flag completion in `completions/agy.fish` for remote agent session execution.
+- Added `acp` to `agy help` subcommand suggestions.
+- Expanded static verification in `scripts/verify-completions.fish` to validate `acp` subcommand, `acp` flags, `--remote-agent` top-level flag, and subcommand flag isolation.
+- Expanded dynamic drift check in `scripts/drift-check.fish` with flag parser support for underscores and `acp` flag validation.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.4.12 to 1.5.0.
+
 ## [1.4.12] - 2026-10-31
 
 ### Added
