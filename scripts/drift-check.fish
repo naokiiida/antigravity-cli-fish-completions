@@ -290,19 +290,26 @@ echo "Drift check: model suggestions"
 
 set -l cli_models (agy models 2>/dev/null | string match -rg '^([a-z0-9\.\-]+)\s+' | sort -u)
 if test (count $cli_models) -gt 0
-    set -l comp_models (__fish_agy_known_models | string replace -r '\t.*' '' | sort -u)
+    set -l comp_models (__drift_completion_words "agy --model " | sort -u)
     set -l model_drift 0
+    set -l model_warnings 0
     for m in $cli_models
         if not contains -- $m $comp_models
             echo "  MISSING model in completions: $m"
             set model_drift 1
         end
     end
-    if test $model_drift -eq 0
-        echo "  OK"
-    else
-        set drift (math "$drift + $model_drift")
+    for m in $comp_models
+        if not contains -- $m $cli_models
+            echo "  WARN: model in completions but not in agy models: $m"
+            set model_warnings (math $model_warnings + 1)
+        end
     end
+    if test $model_drift -eq 0 -a $model_warnings -eq 0
+        echo "  OK"
+    end
+    set drift (math "$drift + $model_drift")
+    set warnings (math "$warnings + $model_warnings")
 else
     echo "  SKIPPED (agy models returned no output)"
 end
