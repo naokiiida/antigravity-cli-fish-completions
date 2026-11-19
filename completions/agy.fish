@@ -380,6 +380,10 @@ complete -c agy -n __fish_use_subcommand -l output-format -d "Output format for 
 # Model completion (known available models + descriptions)
 function __fish_agy_known_models
     printf '%s\t%s\n' \
+        gemini-4-neon-xhigh "Gemini 4 Neon (XHigh)" \
+        gemini-4-neon-high "Gemini 4 Neon (High)" \
+        gemini-4-neon-medium "Gemini 4 Neon (Medium)" \
+        gemini-4-neon-low "Gemini 4 Neon (Low)" \
         gemini-4-argon-high "Gemini 4 Argon (High)" \
         gemini-4-argon-medium "Gemini 4 Argon (Medium)" \
         gemini-4-argon-low "Gemini 4 Argon (Low)" \
@@ -387,6 +391,7 @@ function __fish_agy_known_models
         gemini-4-hydrogen-high "Gemini 4 Hydrogen (High)" \
         gemini-4-hydrogen-medium "Gemini 4 Hydrogen (Medium)" \
         gemini-4-hydrogen-low "Gemini 4 Hydrogen (Low)" \
+        gemini-pro-orchestrator-neon "Orchestrator (Neon)" \
         gemini-pro-orchestrator-g1-pro "Orchestrator (Argon)" \
         "gemini-3.8-flash-high" "Gemini 3.8 Flash (High)" \
         "gemini-3.8-flash-medium" "Gemini 3.8 Flash (Medium)" \
