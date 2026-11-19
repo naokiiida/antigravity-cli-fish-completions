@@ -341,6 +341,13 @@ if test "$plugin_cmds" != "$plugins_cmds"
     set alias_drift 1
 end
 
+set -l agy_model_opts (__drift_completion_words "agy --model " | sort -u)
+set -l antigravity_model_opts (__drift_completion_words "antigravity --model " | sort -u)
+if test "$agy_model_opts" != "$antigravity_model_opts"
+    echo "  MISSING or mismatched --model completions in antigravity alias wrapper"
+    set alias_drift 1
+end
+
 if test $alias_drift -eq 0
     echo "  OK"
 else

@@ -389,9 +389,11 @@ end
 echo "  [13/$total_tests] Checking model options in __fish_agy_known_models..."
 set -l known_models (__fish_agy_known_models | string replace -r '\t.*' '')
 set -l model_flag_comp (complete -C "agy --model " 2>/dev/null | string replace -r '\t.*' '')
-for model in gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
+set -l alias_model_flag_comp (complete -C "antigravity --model " 2>/dev/null | string replace -r '\t.*' '')
+for model in gemini-4-neon-xhigh gemini-4-neon-high gemini-4-neon-medium gemini-4-neon-low \
+    gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
     gemini-4-hydrogen-xhigh gemini-4-hydrogen-high gemini-4-hydrogen-medium gemini-4-hydrogen-low \
-    gemini-pro-orchestrator-g1-pro \
+    gemini-pro-orchestrator-neon gemini-pro-orchestrator-g1-pro \
     gemini-3.8-flash-high gemini-3.8-flash-medium gemini-3.8-flash-low \
     claude-opus-5-5-high claude-opus-5-5-medium claude-opus-5-5-low \
     claude-sonnet-5-5-high claude-sonnet-5-5-medium claude-sonnet-5-5-low \
@@ -404,6 +406,12 @@ for model in gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
         echo "FAIL: Missing --model flag completion option: $model"
         exit 1
     end
+end
+set -l sorted_model_comp (printf '%s\n' $model_flag_comp | sort -u)
+set -l sorted_alias_model_comp (printf '%s\n' $alias_model_flag_comp | sort -u)
+if test (count $sorted_alias_model_comp) -lt 10; or test "$sorted_model_comp" != "$sorted_alias_model_comp"
+    echo "FAIL: Alias completion (antigravity --model) does not match agy --model completions"
+    exit 1
 end
 
 # Test 14: Alias completion propagation (antigravity wraps agy)
