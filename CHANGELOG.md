@@ -4,6 +4,17 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.11] - 2026-11-19
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.11.
+- Added `gemini-4-neon-xhigh`, `gemini-4-neon-high`, `gemini-4-neon-medium`, `gemini-4-neon-low`, and `gemini-pro-orchestrator-neon` (`Orchestrator (Neon)`) to `--model` completion suggestions in `completions/agy.fish`.
+- Expanded static verification in `scripts/verify-completions.fish` (Test 13) to assert all 23 models across `__fish_agy_known_models`, `agy --model`, and `antigravity --model`.
+- Expanded alias parity drift detection in `scripts/drift-check.fish` (Test 7) to verify `antigravity --model` matches `agy --model`.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.5.10 to 1.5.11.
+
 ## [1.5.10] - 2026-11-18
 
 ### Added
