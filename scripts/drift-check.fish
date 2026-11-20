@@ -348,6 +348,24 @@ if test "$agy_model_opts" != "$antigravity_model_opts"
     set alias_drift 1
 end
 
+for sub in "mcp " "plugin " "remote-control " "acp -"
+    set -l agy_sub_opts (__drift_completion_words "agy $sub" | sort -u)
+    set -l antigravity_sub_opts (__drift_completion_words "antigravity $sub" | sort -u)
+    if test "$agy_sub_opts" != "$antigravity_sub_opts"
+        echo "  MISSING or mismatched completions for 'antigravity $sub'"
+        set alias_drift 1
+    end
+end
+
+for psub in "list -" "validate -"
+    set -l plugin_sub_opts (__drift_completion_words "agy plugin $psub" | sort -u)
+    set -l plugins_sub_opts (__drift_completion_words "agy plugins $psub" | sort -u)
+    if test "$plugin_sub_opts" != "$plugins_sub_opts"
+        echo "  MISSING or mismatched completions between 'agy plugin $psub' and 'agy plugins $psub'"
+        set alias_drift 1
+    end
+end
+
 if test $alias_drift -eq 0
     echo "  OK"
 else

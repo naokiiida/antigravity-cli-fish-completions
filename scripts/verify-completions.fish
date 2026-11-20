@@ -437,6 +437,15 @@ if test (count $plugins_alias_subcmds) -lt 5; or test "$plugin_subcmds" != "$plu
     exit 1
 end
 
+for sub in "mcp " "plugin " "remote-control " "acp -"
+    set -l agy_sub (complete -C "agy $sub" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+    set -l alias_sub (complete -C "antigravity $sub" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+    if test (count $alias_sub) -lt 3; or test "$agy_sub" != "$alias_sub"
+        echo "FAIL: Alias completion (antigravity $sub) does not match agy $sub completions"
+        exit 1
+    end
+end
+
 echo ""
 echo "VERIFICATION PASSED"
 echo "==================="
