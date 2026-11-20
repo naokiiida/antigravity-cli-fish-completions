@@ -4,6 +4,16 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.13] - 2026-11-20
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.12 and v1.5.13 (including Gemini 4 Neon model completions across `GEMINI_API_KEY`, `AGY_ADC_AUTH`, and enterprise model gateways).
+- Expanded static verification in `scripts/verify-completions.fish` (Test 14) to verify subcommand and flag propagation (`mcp`, `plugin`, `remote-control`, `acp`) through the `antigravity` alias wrapper.
+- Expanded dynamic alias parity checks in `scripts/drift-check.fish` (Test 7) for nested `antigravity` subcommands and `plugin` vs `plugins` subcommand flags (`list`, `validate`).
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.5.11 to 1.5.13.
+
 ## [1.5.11] - 2026-11-19
 
 ### Added
