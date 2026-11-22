@@ -136,6 +136,48 @@ if not string match -q "*json*" -- $plugins_list_completions
 end
 
 for cmd_prefix in "agy plugin" "agy plugins"
+    set -l plugin_top_flags (complete -C "$cmd_prefix -" 2>/dev/null | string replace -r '\t.*' '')
+    for flag in -h --help
+        if not contains -- $flag $plugin_top_flags
+            echo "FAIL: Missing $cmd_prefix flag: $flag"
+            exit 1
+        end
+    end
+
+    set -l list_flag_tokens (complete -C "$cmd_prefix list -" 2>/dev/null | string replace -r '\t.*' '')
+    for leaked in -h --help
+        if contains -- $leaked $list_flag_tokens
+            echo "FAIL: Leaked flag into $cmd_prefix list: $leaked"
+            exit 1
+        end
+    end
+
+    set -l install_flag_tokens (complete -C "$cmd_prefix install -" 2>/dev/null | string replace -r '\t.*' '')
+    for leaked in --dir --skip-aliases --skip-path -h --help
+        if contains -- $leaked $install_flag_tokens
+            echo "FAIL: Leaked flag into $cmd_prefix install: $leaked"
+            exit 1
+        end
+    end
+
+    for subcmd in import uninstall enable disable link
+        set -l sub_flag_tokens (complete -C "$cmd_prefix $subcmd -" 2>/dev/null | string replace -r '\t.*' '')
+        for leaked in -h --help
+            if contains -- $leaked $sub_flag_tokens
+                echo "FAIL: Leaked flag into $cmd_prefix $subcmd: $leaked"
+                exit 1
+            end
+        end
+    end
+
+    set -l plugin_help_tokens (complete -C "$cmd_prefix help " 2>/dev/null | string replace -r '\t.*' '')
+    for leaked in acp install mcp
+        if contains -- $leaked $plugin_help_tokens
+            echo "FAIL: Leaked top-level subcommand into $cmd_prefix help: $leaked"
+            exit 1
+        end
+    end
+
     set -l import_completions (complete -C "$cmd_prefix import " 2>/dev/null)
     for source in gemini claude
         if not string match -q "*$source*" -- $import_completions
@@ -335,11 +377,13 @@ end
 
 # Test 11: Top-level flags do not leak into subcommands (regression guard)
 echo "  [11/$total_tests] Checking subcommand flag isolation..."
-set -l rc_start_flags (complete -C "agy remote-control start --" 2>/dev/null)
-for leaked in continue conversation effort mode model print remote-agent sandbox settings
-    if string match -q "*--$leaked*" -- $rc_start_flags
-        echo "FAIL: Leaked top-level flag into subcommand: --$leaked"
-        exit 1
+for sub in "remote-control start --" "install --" "mcp add --" "mic-serve --" "plugin list --" "plugin validate --"
+    set -l sub_flags (complete -C "agy $sub" 2>/dev/null | string replace -r '\t.*' '')
+    for leaked in continue conversation effort mode model print remote-agent sandbox settings
+        if contains -- "--$leaked" $sub_flags
+            echo "FAIL: Leaked top-level flag into 'agy $sub': --$leaked"
+            exit 1
+        end
     end
 end
 
@@ -437,13 +481,20 @@ if test (count $plugins_alias_subcmds) -lt 5; or test "$plugin_subcmds" != "$plu
     exit 1
 end
 
-for sub in "mcp " "plugin " "remote-control " "acp -"
+for sub in "mcp " "plugin " "remote-control " "acp -" "install -" "mcp add -" "plugin validate -"
     set -l agy_sub (complete -C "agy $sub" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
     set -l alias_sub (complete -C "antigravity $sub" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
     if test (count $alias_sub) -lt 3; or test "$agy_sub" != "$alias_sub"
         echo "FAIL: Alias completion (antigravity $sub) does not match agy $sub completions"
         exit 1
     end
+end
+
+set -l agy_plugin_list (complete -C "agy plugin list -" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+set -l alias_plugin_list (complete -C "antigravity plugin list -" 2>/dev/null | string replace -r '\t.*' '' | sort -u)
+if test (count $alias_plugin_list) -ne 1; or test "$agy_plugin_list" != "$alias_plugin_list"
+    echo "FAIL: Alias completion (antigravity plugin list -) does not match agy plugin list - completions"
+    exit 1
 end
 
 echo ""

@@ -266,6 +266,32 @@ for subcmd in $flag_checks
     set drift (math "$drift + $test_drift")
 end
 
+echo "Drift check: plugin subcommand flag isolation"
+set -l plugin_iso_drift 0
+for pcmd in plugin plugins
+    set -l list_flags (__drift_completion_words "agy $pcmd list -" | string match -rg '^(-.*)' | sort -u)
+    if not contains -- --json $list_flags
+        echo "  MISSING in completions: agy $pcmd list --json"
+        set plugin_iso_drift 1
+    end
+    for flag in $list_flags
+        if test "$flag" != --json
+            echo "  EXTRA/LEAKED in completions: agy $pcmd list $flag"
+            set plugin_iso_drift 1
+        end
+    end
+
+    set -l install_flags (__drift_completion_words "agy $pcmd install -" | string match -rg '^(-.*)' | sort -u)
+    for flag in $install_flags
+        echo "  EXTRA/LEAKED in completions: agy $pcmd install $flag"
+        set plugin_iso_drift 1
+    end
+end
+if test $plugin_iso_drift -eq 0
+    echo "  OK"
+end
+set drift (math "$drift + $plugin_iso_drift")
+
 # --- Test 5: Cache and marketplace directory health --------------------------
 
 echo "Drift check: cache & marketplace directory resolution"
@@ -348,7 +374,7 @@ if test "$agy_model_opts" != "$antigravity_model_opts"
     set alias_drift 1
 end
 
-for sub in "mcp " "plugin " "remote-control " "acp -"
+for sub in "mcp " "plugin " "remote-control " "acp -" "install -" "mcp add -" "plugin list -" "plugin validate -"
     set -l agy_sub_opts (__drift_completion_words "agy $sub" | sort -u)
     set -l antigravity_sub_opts (__drift_completion_words "antigravity $sub" | sort -u)
     if test "$agy_sub_opts" != "$antigravity_sub_opts"
