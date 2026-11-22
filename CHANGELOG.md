@@ -4,6 +4,21 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.14] - 2026-11-22
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.14.
+- Expanded static verification in `scripts/verify-completions.fish` for `plugin`/`plugins` subcommand flag isolation (`list`, `install`, `import`, `uninstall`, `enable`, `disable`, `link`, `help`), multi-subcommand root flag isolation (Test 11), and nested `antigravity` alias parity (`install`, `mcp add`, `plugin list`, `plugin validate`).
+- Expanded dynamic drift detection in `scripts/drift-check.fish` with plugin subcommand flag isolation checks (`plugin list`, `plugin install`) and broader `antigravity` nested alias parity checks (Test 7).
+
+### Changed
+- Aligned `agy remote-control start --session` description in `completions/agy.fish` with `agy` v1.5.14 `--help` output.
+- Bumped tracked CLI version in `agy-version` from 1.5.13 to 1.5.14.
+
+### Fixed
+- Scoped top-level `install` flags and `help` subcommand completions in `completions/agy.fish` with `not __fish_seen_subcommand_from plugin plugins` so `agy plugin install` no longer leaks `agy install` flags (`--dir`, `--skip-aliases`, `--skip-path`) and `agy plugin help` no longer suggests top-level subcommands.
+- Scoped `plugin`/`plugins` `-h`/`--help` flags to top-level `plugin` and `plugin validate` so unsupported subcommands (`list`, `import`, `install`, `uninstall`, `enable`, `disable`, `link`) no longer suggest `-h`/`--help`.
+
 ## [1.5.13] - 2026-11-20
 
 ### Added
