@@ -454,10 +454,10 @@ complete -c agy -n "__fish_seen_subcommand_from acp" -l worker -d "Serve a singl
 # install subcommand
 # =============================================================================
 
-complete -c agy -n "__fish_seen_subcommand_from install" -l dir -d "Custom directory target to configure PATH for" -rxa "(__fish_complete_directories)"
-complete -c agy -n "__fish_seen_subcommand_from install" -l skip-aliases -d "Bypasses shell profile alias purging"
-complete -c agy -n "__fish_seen_subcommand_from install" -l skip-path -d "Bypasses shell profile PATH appending"
-complete -c agy -n "__fish_seen_subcommand_from install" -s h -l help -d "Show help"
+complete -c agy -n "__fish_seen_subcommand_from install; and not __fish_seen_subcommand_from plugin plugins" -l dir -d "Custom directory target to configure PATH for" -rxa "(__fish_complete_directories)"
+complete -c agy -n "__fish_seen_subcommand_from install; and not __fish_seen_subcommand_from plugin plugins" -l skip-aliases -d "Bypasses shell profile alias purging"
+complete -c agy -n "__fish_seen_subcommand_from install; and not __fish_seen_subcommand_from plugin plugins" -l skip-path -d "Bypasses shell profile PATH appending"
+complete -c agy -n "__fish_seen_subcommand_from install; and not __fish_seen_subcommand_from plugin plugins" -s h -l help -d "Show help"
 
 # =============================================================================
 # mcp subcommand
@@ -512,7 +512,7 @@ complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and not __fish_s
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and not __fish_seen_subcommand_from list import install uninstall enable disable validate link help" -xa validate -d "Check a plugin's manifest and files"
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and not __fish_seen_subcommand_from list import install uninstall enable disable validate link help" -xa link -d "Generate link to a marketplace"
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and not __fish_seen_subcommand_from list import install uninstall enable disable validate link help" -xa help -d "Show help"
-complete -c agy -n "__fish_seen_subcommand_from plugin plugins" -s h -l help -d "Show help"
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and not __fish_seen_subcommand_from list import install uninstall enable disable validate link help" -s h -l help -d "Show help"
 
 # plugin list
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from list" -l json -d "List installed plugins as JSON"
@@ -535,6 +535,7 @@ complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_
 # plugin validate
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -l strict -d "Also fail on warnings"
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -l json -d "Print the report as JSON"
+complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -s h -l help -d "Show help"
 complete -c agy -n "__fish_seen_subcommand_from plugin plugins; and __fish_seen_subcommand_from validate" -rF
 
 # plugin link
@@ -552,7 +553,7 @@ complete -c agy -n "__fish_seen_subcommand_from remote-control" -s h -l help -d 
 
 # remote-control start flags
 complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_subcommand_from start" -l name -d "Set this machine's instance name shown in Remote Control" -rx
-complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_subcommand_from start" -l session -d "Register the daemon login-scoped instead of starting at boot"
+complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_subcommand_from start" -l session -d "Register the daemon login-scoped (stops at logout) instead of starting at boot"
 complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_subcommand_from start" -s h -l help -d "Show help"
 
 # remote-control status & stop flags
@@ -562,7 +563,7 @@ complete -c agy -n "__fish_seen_subcommand_from remote-control; and __fish_seen_
 # help subcommand
 # =============================================================================
 
-complete -c agy -n "__fish_seen_subcommand_from help" -xa "acp agent changelog install mcp mic-serve models plugin remote-control update" -d Subcommand
+complete -c agy -n "__fish_seen_subcommand_from help; and not __fish_seen_subcommand_from plugin plugins" -xa "acp agent changelog install mcp mic-serve models plugin remote-control update" -d Subcommand
 
 # =============================================================================
 # Simple subcommands (help only)
