@@ -314,15 +314,41 @@ end
 
 echo "Drift check: model suggestions"
 
-set -l cli_models (agy models 2>/dev/null | string match -rg '^([a-z0-9\.\-]+)\s+' | sort -u)
+set -l cli_model_lines (agy models 2>/dev/null | string trim)
+set -l cli_models
+set -l cli_model_descs
+for line in $cli_model_lines
+    set -l m (string match -r '^([a-z0-9\.\-]+)\s+(.+)$' -- $line)
+    if test (count $m) -ge 3
+        set -a cli_models $m[2]
+        set -a cli_model_descs (string trim -- $m[3])
+    end
+end
+
 if test (count $cli_models) -gt 0
-    set -l comp_models (__drift_completion_words "agy --model " | sort -u)
+    set -l raw_comp_models (complete -C "agy --model " 2>/dev/null)
+    set -l comp_models (printf '%s\n' $raw_comp_models | string replace -r '\t.*' '' | sort -u)
     set -l model_drift 0
     set -l model_warnings 0
-    for m in $cli_models
+    for i in (seq (count $cli_models))
+        set -l m $cli_models[$i]
+        set -l expected_desc $cli_model_descs[$i]
         if not contains -- $m $comp_models
             echo "  MISSING model in completions: $m"
             set model_drift 1
+        else
+            set -l escaped_m (string escape --style=regex -- $m)
+            set -l comp_entry (string match -r "^$escaped_m\t(.*)\$" -- $raw_comp_models)
+            if test (count $comp_entry) -ge 2
+                set -l actual_desc (string trim -- $comp_entry[2])
+                if test "$actual_desc" != "$expected_desc"
+                    echo "  MISMATCHED model description in completions: $m (expected '$expected_desc', got '$actual_desc')"
+                    set model_drift 1
+                end
+            else
+                echo "  MISMATCHED model description in completions: $m (expected '$expected_desc', got '')"
+                set model_drift 1
+            end
         end
     end
     for m in $comp_models

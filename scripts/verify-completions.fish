@@ -435,9 +435,10 @@ set -l known_models (__fish_agy_known_models | string replace -r '\t.*' '')
 set -l model_flag_comp (complete -C "agy --model " 2>/dev/null | string replace -r '\t.*' '')
 set -l alias_model_flag_comp (complete -C "antigravity --model " 2>/dev/null | string replace -r '\t.*' '')
 for model in gemini-4-neon-xhigh gemini-4-neon-high gemini-4-neon-medium gemini-4-neon-low \
+    gemini-4-carbon-high gemini-4-carbon-medium gemini-4-carbon-low \
     gemini-4-argon-high gemini-4-argon-medium gemini-4-argon-low \
     gemini-4-hydrogen-xhigh gemini-4-hydrogen-high gemini-4-hydrogen-medium gemini-4-hydrogen-low \
-    gemini-pro-orchestrator-neon gemini-pro-orchestrator-g1-pro \
+    gemini-pro-orchestrator-neon gemini-pro-orchestrator gemini-pro-orchestrator-argon \
     gemini-3.8-flash-high gemini-3.8-flash-medium gemini-3.8-flash-low \
     claude-opus-5-5-high claude-opus-5-5-medium claude-opus-5-5-low \
     claude-sonnet-5-5-high claude-sonnet-5-5-medium claude-sonnet-5-5-low \
@@ -448,6 +449,12 @@ for model in gemini-4-neon-xhigh gemini-4-neon-high gemini-4-neon-medium gemini-
     end
     if not contains -- $model $model_flag_comp
         echo "FAIL: Missing --model flag completion option: $model"
+        exit 1
+    end
+end
+for retired_model in gemini-pro-orchestrator-g1-pro
+    if contains -- $retired_model $known_models; or contains -- $retired_model $model_flag_comp
+        echo "FAIL: Retired model still present in completions: $retired_model"
         exit 1
     end
 end
