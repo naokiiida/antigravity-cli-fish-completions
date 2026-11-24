@@ -4,6 +4,20 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.15] - 2026-11-24
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.15.
+- Added `gemini-4-carbon-high`, `gemini-4-carbon-medium`, `gemini-4-carbon-low`, `gemini-pro-orchestrator` (`Orchestrator (Carbon)`), and `gemini-pro-orchestrator-argon` (`Orchestrator (Argon)`) to `--model` completion suggestions in `completions/agy.fish`.
+- Expanded static verification in `scripts/verify-completions.fish` (Test 13) to assert all 27 current models and guard against the retired `gemini-pro-orchestrator-g1-pro` model ID.
+- Expanded dynamic model drift detection in `scripts/drift-check.fish` (Test 6) to validate `--model` display descriptions against `agy models`.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.5.14 to 1.5.15.
+
+### Removed
+- Removed retired `gemini-pro-orchestrator-g1-pro` model suggestion from `completions/agy.fish` (replaced by `gemini-pro-orchestrator-argon`).
+
 ## [1.5.14] - 2026-11-22
 
 ### Added
