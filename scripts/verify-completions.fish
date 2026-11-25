@@ -76,13 +76,13 @@ echo "  [4/$total_tests] Checking flag completions..."
 set -l flag_completions (complete -C "agy -" 2>/dev/null)
 for flag in add-dir agent continue conversation dangerously-skip-permissions disable-slash-commands \
     effort input-format json-schema log-file mode model new-project output-format print print-timeout \
-    project prompt prompt-interactive remote-agent remote-control sandbox settings
+    project prompt prompt-interactive remote-agent remote-control resume sandbox settings
     if not string match -q "*$flag*" -- $flag_completions
         echo "FAIL: Missing flag: --$flag"
         exit 1
     end
 end
-for short_flag in c i p
+for short_flag in c i p r
     if not string match -rq "^-$short_flag\b" -- $flag_completions
         echo "FAIL: Missing short flag: -$short_flag"
         exit 1
@@ -379,7 +379,7 @@ end
 echo "  [11/$total_tests] Checking subcommand flag isolation..."
 for sub in "remote-control start --" "install --" "mcp add --" "mic-serve --" "plugin list --" "plugin validate --"
     set -l sub_flags (complete -C "agy $sub" 2>/dev/null | string replace -r '\t.*' '')
-    for leaked in continue conversation effort mode model print remote-agent sandbox settings
+    for leaked in continue conversation effort mode model print remote-agent resume sandbox settings
         if contains -- "--$leaked" $sub_flags
             echo "FAIL: Leaked top-level flag into 'agy $sub': --$leaked"
             exit 1
@@ -427,6 +427,23 @@ for subcmd in acp agent changelog install mcp mic-serve models plugin remote-con
         echo "FAIL: agy help failed to complete subcommand: $subcmd"
         exit 1
     end
+end
+
+begin
+    set -l mock_home (mktemp -d)
+    mkdir -p "$mock_home/.gemini/antigravity-cli/conversations"
+    set -l mock_uuid 12345678-1234-1234-1234-123456789abc
+    touch "$mock_home/.gemini/antigravity-cli/conversations/$mock_uuid.db"
+    set -lx HOME "$mock_home"
+    for conv_flag in --conversation --resume -r
+        set -l conv_comp (complete -C "agy $conv_flag " 2>/dev/null | string replace -r '\t.*' '')
+        if not contains -- $mock_uuid $conv_comp
+            rm -rf "$mock_home"
+            echo "FAIL: agy $conv_flag failed to complete conversation UUID"
+            exit 1
+        end
+    end
+    rm -rf "$mock_home"
 end
 
 # Test 13: Model completion verification

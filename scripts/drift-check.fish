@@ -400,6 +400,15 @@ if test "$agy_model_opts" != "$antigravity_model_opts"
     set alias_drift 1
 end
 
+set -l agy_conv_opts (__drift_completion_words "agy --conversation " | sort -u)
+for conv_alias in "agy --resume " "agy -r " "antigravity --resume " "antigravity -r "
+    set -l alias_conv_opts (__drift_completion_words "$conv_alias" | sort -u)
+    if test "$agy_conv_opts" != "$alias_conv_opts"
+        echo "  MISSING or mismatched conversation completions for '$conv_alias'"
+        set alias_drift 1
+    end
+end
+
 for sub in "mcp " "plugin " "remote-control " "acp -" "install -" "mcp add -" "plugin list -" "plugin validate -"
     set -l agy_sub_opts (__drift_completion_words "agy $sub" | sort -u)
     set -l antigravity_sub_opts (__drift_completion_words "antigravity $sub" | sort -u)
