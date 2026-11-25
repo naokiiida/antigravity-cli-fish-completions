@@ -4,6 +4,17 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.16] - 2026-11-25
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.16.
+- Added `-r` and `--resume` top-level flag completions (aliases for `--conversation`) with dynamic conversation ID suggestions in `completions/agy.fish`.
+- Expanded static verification in `scripts/verify-completions.fish` to validate `-r`/`--resume` flag registration, subcommand flag isolation, and conversation UUID completion parity with `--conversation`.
+- Expanded dynamic alias parity checks in `scripts/drift-check.fish` (Test 7) to verify `agy --resume`, `agy -r`, `antigravity --resume`, and `antigravity -r` match `agy --conversation` completions.
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.5.15 to 1.5.16.
+
 ## [1.5.15] - 2026-11-24
 
 ### Added
