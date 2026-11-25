@@ -412,6 +412,7 @@ complete -c agy -n __fish_use_subcommand -l model -d "Model for the current CLI 
 
 # Dynamic value flags
 complete -c agy -n __fish_use_subcommand -l conversation -d "Resume a previous conversation by ID" -rxa "(__fish_agy_conversations)"
+complete -c agy -n __fish_use_subcommand -s r -l resume -d "Alias for --conversation" -rxa "(__fish_agy_conversations)"
 complete -c agy -n __fish_use_subcommand -l agent -d "Agent for the current CLI session" -rxa "(__fish_agy_agents)"
 complete -c agy -n __fish_use_subcommand -l add-dir -d "Add a directory to the workspace (repeatable)" -rxa "(__fish_complete_directories)"
 
