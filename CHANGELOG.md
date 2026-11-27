@@ -4,6 +4,14 @@ All notable changes to antigravity-cli-fish-completions are documented here.
 
 ## [Unreleased]
 
+## [1.5.18] - 2026-11-27
+
+### Added
+- Verified compatibility with Google Antigravity CLI (`agy`) v1.5.18 (no new CLI flags, subcommands, or model options).
+
+### Changed
+- Bumped tracked CLI version in `agy-version` from 1.5.17 to 1.5.18.
+
 ## [1.5.17] - 2026-11-26
 
 ### Added
